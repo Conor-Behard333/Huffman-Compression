@@ -187,7 +187,7 @@ public class UncompressFile {
     }
 
     /**
-     * Save file
+     * Save file.
      *
      * @param decompressedData the decompressed data
      * @param fileDir          the file dir
