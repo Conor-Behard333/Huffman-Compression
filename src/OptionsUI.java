@@ -82,12 +82,13 @@ public class OptionsUI {
             HuffmanTree huffman = new HuffmanTree();
             if (fileSelected != null && outputDir != null) {
                 try {
+                    System.out.println(fileSelected.getName());
                     if (compress) {
-                        huffman.compress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), fileSelected.getName());
+                        huffman.compress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeTxtExtension(fileSelected.getName()));
                         showAlert(Alert.AlertType.INFORMATION, "Successfully compressed", "Successfully compressed",
                                 fileSelected.getName() + " was successful compressed and placed in " + outputDir.getAbsolutePath());
                     } else {
-                        huffman.uncompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), fileSelected.getName());
+                        huffman.uncompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeTxtExtension(fileSelected.getName())));
                         showAlert(Alert.AlertType.INFORMATION, "Successfully uncompressed", "Successfully uncompressed",
                                 fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
                     }
@@ -97,6 +98,14 @@ public class OptionsUI {
             }
         });
         return okButton;
+    }
+
+    private String removeTxtExtension(String fileName) {
+        return fileName.split("\\.")[0];
+    }
+
+    private String removeCompressedTag(String fileName) {
+        return fileName.split("_")[0];
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String headerText, String contentText) {

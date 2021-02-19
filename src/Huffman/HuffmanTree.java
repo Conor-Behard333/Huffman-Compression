@@ -17,7 +17,7 @@ public class HuffmanTree {
     public void compress(String fileDir, String newFileDir, String outputFileName) {
         ArrayList<Node> leafNodes = getTree(fileDir);
         HashMap<Character, String> encoder = getEncoder(leafNodes);
-        newFileDir += "\\" + outputFileName;
+        newFileDir += "\\" + outputFileName + "_compressed.txt";
         new CompressFile(fileDir, newFileDir, encoder, leafNodes);
     }
 
@@ -29,7 +29,7 @@ public class HuffmanTree {
      * @param outputFileName the output file name
      */
     public void uncompress(String fileDir, String newFileDir, String outputFileName) {
-        newFileDir += "\\" + outputFileName;
+        newFileDir += "\\" + outputFileName + "_uncompressed.txt";
         new UncompressFile(fileDir, newFileDir);
     }
 
