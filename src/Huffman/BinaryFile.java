@@ -1,11 +1,12 @@
 package Huffman;
 
 import java.io.*;
+import java.util.Scanner;
 
 /**
  * The type Byte output stream.
  */
-public class ByteOutputStream extends FileOutputStream {
+public class BinaryFile extends FileOutputStream {
     /**
      * The Buffer.
      */
@@ -21,7 +22,7 @@ public class ByteOutputStream extends FileOutputStream {
      * @param file the file
      * @throws FileNotFoundException the file not found exception
      */
-    public ByteOutputStream(File file) throws FileNotFoundException {
+    public BinaryFile(File file) throws FileNotFoundException {
         super(file, true);
         buffer = 0x00;
     }
@@ -33,12 +34,12 @@ public class ByteOutputStream extends FileOutputStream {
      * @throws IOException the io exception
      */
     public void write(byte bit) throws IOException {
-        buffer = (byte)(buffer << 1);
+        buffer = (byte) (buffer << 1);
         buffer |= bit;
 
         pos++;
 
-        if(pos == 8)
+        if (pos == 8)
             flushByte();
     }
 
@@ -49,7 +50,7 @@ public class ByteOutputStream extends FileOutputStream {
      * @throws IOException the io exception
      */
     public void write(byte[] bits) throws IOException {
-        for(byte bit : bits)
+        for (byte bit : bits)
             write(bit);
     }
 
@@ -59,8 +60,8 @@ public class ByteOutputStream extends FileOutputStream {
      * @throws IOException the io exception
      */
     public void close() throws IOException {
-        if(pos != 0) {
-            buffer = (byte)(buffer << (8 - pos));
+        if (pos != 0) {
+            buffer = (byte) (buffer << (8 - pos));
             flushByte();
         }
         super.close();
@@ -75,5 +76,25 @@ public class ByteOutputStream extends FileOutputStream {
         super.write(buffer);
         buffer = 0x00;
         pos = 0;
+    }
+
+    /**
+     * Read file string.
+     *
+     * @param fileDir the file dir
+     * @return the string
+     */
+    public static String readFile(String fileDir) {
+        StringBuilder text = new StringBuilder();
+        try {
+            try (Scanner sc = new Scanner(new File(fileDir))) {
+                while ((sc.hasNext())) {
+                    text.append(sc.nextLine()).append("\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return text.toString().trim();
     }
 }

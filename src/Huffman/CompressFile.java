@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 /**
  * The type Compress.
@@ -22,34 +21,13 @@ public class CompressFile {
      * @param leafNodes  the leaf nodes
      */
     CompressFile(String fileDir, String newFileDir, HashMap<Character, String> encoder, ArrayList<Node> leafNodes){
-        String fileContents = readFile(fileDir);
+        String fileContents = BinaryFile.readFile(fileDir);
         String compressedData = getCompressedData(fileContents, encoder);
         addTreeCodeAndPaddingToFile(newFileDir, leafNodes, compressedData);
         writeBinaryDataToFile(compressedData, newFileDir);
     }
 
-    /**
-     * Read file string.
-     *
-     * @param fileDir the file dir
-     * @return the string
-     */
-    /*
-     * Reads a text file and stores it as a single string
-     */
-    private String readFile(String fileDir) {
-        StringBuilder text = new StringBuilder();
-        try {
-            try (Scanner sc = new Scanner(new File(fileDir))) {
-                while ((sc.hasNext())) {
-                    text.append(sc.nextLine()).append("\n");
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text.toString().trim();
-    }
+
 
     /**
      * Gets compressed data.
@@ -102,43 +80,9 @@ public class CompressFile {
     private String getTreeCode(ArrayList<Node> leafNodes) {
         StringBuilder treeCode = new StringBuilder();
         for (Node leaf : leafNodes) {
-            treeCode.append(getPath(leaf)).append(" ").append((int) leaf.getValue()).append(" ");
+            treeCode.append(HuffmanTree.getPath(leaf)).append(" ").append((int) leaf.getValue()).append(" ");
         }
         return treeCode.toString();
-    }
-
-    /**
-     * Gets path.
-     *
-     * @param node the node
-     * @return the path
-     */
-    protected String getPath(Node node) {
-        StringBuilder path = new StringBuilder(findPath(node)).reverse();
-        return path.toString();
-    }
-
-    /**
-     * Find path string.
-     *
-     * @param node      the node
-     * @param prev_node the prev node
-     * @return the string
-     */
-    private String findPath(Node node, Node... prev_node) {
-        String str = "";
-        if (prev_node.length > 0) {
-            if (node.getChild_left().equals(prev_node[0])) {
-                str += "0";
-            } else {
-                str += "1";
-            }
-        }
-
-        if (!node.isRoot()) {
-            str += findPath(node.getParent(), node);
-        }
-        return str;
     }
 
     /**
@@ -150,7 +94,7 @@ public class CompressFile {
     private void writeBinaryDataToFile(String compressedData, String fileDir) {
         try {
             File compressedFile = new File(fileDir);
-            ByteOutputStream outputStream = new ByteOutputStream(compressedFile);
+            BinaryFile outputStream = new BinaryFile(compressedFile);
 
             byte[] bits = new byte[8];
             int index = 0;

@@ -1,6 +1,5 @@
 package Huffman;
 
-import java.io.*;
 import java.util.*;
 
 /**
@@ -25,8 +24,9 @@ public class HuffmanTree {
     /**
      * Uncompress.
      *
-     * @param fileDir    the file dir
-     * @param newFileDir the new file dir
+     * @param fileDir        the file dir
+     * @param newFileDir     the new file dir
+     * @param outputFileName the output file name
      */
     public void uncompress(String fileDir, String newFileDir, String outputFileName) {
         newFileDir += "\\" + outputFileName;
@@ -76,7 +76,7 @@ public class HuffmanTree {
      * @return the word frequencies
      */
     private HashMap<Character, Integer> getWordFrequencies(String fileDir) {
-        String file = readFile(fileDir);
+        String file = BinaryFile.readFile(fileDir);
         HashMap<Character, Integer> wordFrequencies = new HashMap<>();
 
         for (int i = 0; i < file.length(); i++) {
@@ -88,27 +88,6 @@ public class HuffmanTree {
             }
         }
         return wordFrequencies;
-    }
-
-
-    /**
-     * Read file string.
-     *
-     * @param fileDir the file dir
-     * @return the string
-     */
-    private String readFile(String fileDir) {
-        StringBuilder text = new StringBuilder();
-        try {
-            try (Scanner sc = new Scanner(new File(fileDir))) {
-                while ((sc.hasNext())) {
-                    text.append(sc.nextLine()).append("\n");
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return text.toString().trim();
     }
 
     /**
@@ -135,7 +114,7 @@ public class HuffmanTree {
      * @param prev_node the prev node
      * @return the string
      */
-    private String findPath(Node node, Node... prev_node) {
+    private static String findPath(Node node, Node... prev_node) {
         String str = "";
         if (prev_node.length > 0) {
             if (node.getChild_left().equals(prev_node[0])) {
@@ -157,7 +136,7 @@ public class HuffmanTree {
      * @param node the node
      * @return the path
      */
-    protected String getPath(Node node) {
+    protected static String getPath(Node node) {
         StringBuilder path = new StringBuilder(findPath(node)).reverse();
         return path.toString();
     }
