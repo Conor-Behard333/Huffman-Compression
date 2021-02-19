@@ -1,6 +1,7 @@
 import Huffman.HuffmanTree;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -11,6 +12,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class OptionsUI {
     private File fileSelected = null;
@@ -82,17 +84,27 @@ public class OptionsUI {
                 try {
                     if (compress) {
                         huffman.compress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), fileSelected.getName());
-                        System.out.println("Compression Successful");
+                        showAlert(Alert.AlertType.INFORMATION, "Successfully compressed", "Successfully compressed",
+                                fileSelected.getName() + " was successful compressed and placed in " + outputDir.getAbsolutePath());
                     } else {
                         huffman.uncompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), fileSelected.getName());
-                        System.out.println("Uncompress Successful");
+                        showAlert(Alert.AlertType.INFORMATION, "Successfully uncompressed", "Successfully uncompressed",
+                                fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
                     }
                 } catch (Exception e) {
-                    System.out.println("Compression Unsuccessful");
+                    showAlert(Alert.AlertType.ERROR, "Unsuccessful", "Something went wrong!", Arrays.toString(e.getStackTrace()));
                 }
             }
         });
         return okButton;
+    }
+
+    private void showAlert(Alert.AlertType alertType, String title, String headerText, String contentText) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.showAndWait();
     }
 
     private Button getSelectFileButton(Stage stage) {

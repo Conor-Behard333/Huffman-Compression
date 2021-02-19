@@ -21,17 +21,15 @@ public class HomeUI extends Application {
     public void start(Stage stage) {
         stage.setTitle("Compress or Uncompress file");
         stage.setResizable(false);
-        Button compress = new Button("Compress file");
-        compress.setPrefSize(520, 100);
-        compress.setStyle("-fx-font-size: 50");
+        stage.setOnCloseRequest(event -> System.exit(0));
+
+        Button compress = getButton("Compress file");
         compress.setOnAction(event -> {
             new OptionsUI("Compress", true);
             stage.close();
         });
 
-        Button uncompress = new Button("Uncompress file");
-        uncompress.setPrefSize(520, 100);
-        uncompress.setStyle("-fx-font-size: 50");
+        Button uncompress = getButton("Uncompress file");
         uncompress.setOnAction(event -> {
             new OptionsUI("Uncompress", false);
             stage.close();
@@ -41,5 +39,12 @@ public class HomeUI extends Application {
         Scene scene = new Scene(vBox, 500, 200);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private Button getButton(String s) {
+        Button compress = new Button(s);
+        compress.setPrefSize(520, 100);
+        compress.setStyle("-fx-font-size: 50");
+        return compress;
     }
 }
