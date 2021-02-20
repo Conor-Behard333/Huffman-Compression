@@ -61,7 +61,6 @@ public class Node implements Comparable<Node> {
      *
      * @return the frequency
      */
-// Getters
     public int getFrequency() {
         return frequency;
     }

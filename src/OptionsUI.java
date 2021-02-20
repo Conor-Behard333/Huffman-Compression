@@ -82,7 +82,6 @@ public class OptionsUI {
             HuffmanTree huffman = new HuffmanTree();
             if (fileSelected != null && outputDir != null) {
                 try {
-                    System.out.println(fileSelected.getName());
                     if (compress) {
                         huffman.compress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeTxtExtension(fileSelected.getName()));
                         showAlert(Alert.AlertType.INFORMATION, "Successfully compressed", "Successfully compressed",
