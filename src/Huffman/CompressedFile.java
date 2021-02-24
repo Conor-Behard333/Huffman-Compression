@@ -8,31 +8,31 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The type Compress.
+ * Used to compress a file and save it to a location
  */
-public class CompressFile {
+public class CompressedFile {
 
     /**
      * Instantiates a new Compress.
      *
-     * @param fileDir    the file dir
-     * @param newFileDir the new file dir
+     * @param fileContents    the file dir of the file to be compressed
+     * @param newFileDir the file dir of the compressed file
      * @param encoder    the encoder
-     * @param leafNodes  the leaf nodes
+     * @param leafNodes  the leaf nodes of the Huffman tree
      */
-    CompressFile(String fileDir, String newFileDir, HashMap<Character, String> encoder, ArrayList<Node> leafNodes){
-        String fileContents = BinaryFile.readFile(fileDir);
+    CompressedFile(String fileContents, String newFileDir, HashMap<Character, String> encoder, ArrayList<Node> leafNodes){
+//        String fileContents = BinaryFile.readFile(fileDir);
         String compressedData = getCompressedData(fileContents, encoder);
-        addTreeCodeAndPaddingToFile(newFileDir, leafNodes, compressedData);
+        addTreeStructureAndPaddingToFile(newFileDir, leafNodes, compressedData);
         writeBinaryDataToFile(compressedData, newFileDir);
     }
 
 
 
     /**
-     * Gets compressed data.
+     * Compresses the data using the encoder
      *
-     * @param fileContents the file contents
+     * @param fileContents the contents of the file
      * @param encoder      the encoder
      * @return the compressed data
      */
@@ -47,22 +47,23 @@ public class CompressFile {
     }
 
     /**
-     * Add tree code and padding to file.
+     * Adds the tree structure of the Huffman tree and
+     * how much padding has been used when compressing the data.
      *
-     * @param newFileDir     the new file dir
-     * @param leafNodes      the leaf nodes
+     * @param newFileDir     the file dir of the compressed file
+     * @param leafNodes      the leaf nodes of the Huffman tree
      * @param compressedData the compressed data
      */
-    private void addTreeCodeAndPaddingToFile(String newFileDir, ArrayList<Node> leafNodes, String compressedData) {
+    private void addTreeStructureAndPaddingToFile(String newFileDir, ArrayList<Node> leafNodes, String compressedData) {
         int padding = 8 - (compressedData.length() % 8);
         if (compressedData.length() % 8 == 0) {
             padding = 0;
         }
 
         try {
-            FileWriter write = new FileWriter(newFileDir, false);
+            FileWriter write = new FileWriter(newFileDir, false);//don't append to the file
             try (PrintWriter printLine = new PrintWriter(write)) {
-                printLine.print(getTreeCode(leafNodes) + "\n");
+                printLine.print(getTreeStructure(leafNodes) + "\n");
                 printLine.print(padding + "\n");
             }
             write.close();
@@ -72,12 +73,17 @@ public class CompressFile {
     }
 
     /**
-     * Gets tree code.
+     * Gets the structure of the Huffman tree.
+     *
+     * The structure of the tree is represented as the path to a leaf node and the character for that leaf node
+     * For example:
+     * 01011 A
+     * means to get to the leaf node A go left, right, left, right, right
      *
      * @param leafNodes the leaf nodes
-     * @return the tree code
+     * @return the structure of the Huffman tree as a string
      */
-    private String getTreeCode(ArrayList<Node> leafNodes) {
+    private String getTreeStructure(ArrayList<Node> leafNodes) {
         StringBuilder treeCode = new StringBuilder();
         for (Node leaf : leafNodes) {
             treeCode.append(HuffmanTree.getPath(leaf)).append(" ").append((int) leaf.getValue()).append(" ");
@@ -86,10 +92,10 @@ public class CompressFile {
     }
 
     /**
-     * Write binary data to file.
+     * Write the compressed data to file.
      *
      * @param compressedData the compressed data
-     * @param fileDir        the file dir
+     * @param fileDir        the file dir of the compressed file
      */
     private void writeBinaryDataToFile(String compressedData, String fileDir) {
         try {

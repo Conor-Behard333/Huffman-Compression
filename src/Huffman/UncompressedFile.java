@@ -7,14 +7,14 @@ import java.nio.file.Paths;
 /**
  * The type Uncompress.
  */
-public class UncompressFile {
+public class UncompressedFile {
     /**
      * Instantiates a new Uncompress.
      *
      * @param fileDir    the file dir
      * @param newFileDir the new file dir
      */
-    UncompressFile(String fileDir, String newFileDir) {
+    UncompressedFile(String fileDir, String newFileDir) {
         String[] treeAndPadding = getTreeCodeAndPadding(fileDir);
         String file = readBinaryDataFromFile(fileDir, treeAndPadding[0].length() + treeAndPadding[1].length());
         Node tree = createTree(treeAndPadding[0]);

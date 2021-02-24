@@ -4,20 +4,14 @@ import java.io.*;
 import java.util.Scanner;
 
 /**
- * The type Byte output stream.
+ * Used to create and read files
  */
 public class BinaryFile extends FileOutputStream {
-    /**
-     * The Buffer.
-     */
-    byte buffer;
-    /**
-     * The Pos.
-     */
-    byte pos;
+    private byte buffer;
+    private byte pos;
 
     /**
-     * Instantiates a new Byte output stream.
+     * Instantiates a new BinaryFile object.
      *
      * @param file the file
      * @throws FileNotFoundException the file not found exception
@@ -28,25 +22,25 @@ public class BinaryFile extends FileOutputStream {
     }
 
     /**
-     * Write.
+     * Write an individual bit to the buffer.
+     * If the buffer has 8 bits then write the buffer to the file and reset it
      *
-     * @param bit the bit
+     * @param bit the bit to write to the file
      * @throws IOException the io exception
      */
     public void write(byte bit) throws IOException {
         buffer = (byte) (buffer << 1);
         buffer |= bit;
-
         pos++;
-
-        if (pos == 8)
+        if (pos == 8){
             flushByte();
+        }
     }
 
     /**
-     * Write.
+     * Write all the bits to the file.
      *
-     * @param bits the bits
+     * @param bits a byte array of bits
      * @throws IOException the io exception
      */
     public void write(byte[] bits) throws IOException {
@@ -55,7 +49,7 @@ public class BinaryFile extends FileOutputStream {
     }
 
     /**
-     * Close.
+     * Closes the output stream.
      *
      * @throws IOException the io exception
      */
@@ -68,7 +62,7 @@ public class BinaryFile extends FileOutputStream {
     }
 
     /**
-     * Flush byte.
+     * Reset the buffer.
      *
      * @throws IOException the io exception
      */
@@ -79,10 +73,10 @@ public class BinaryFile extends FileOutputStream {
     }
 
     /**
-     * Read file string.
+     * Read a file.
      *
      * @param fileDir the file dir
-     * @return the string
+     * @return the contents of the file as a string
      */
     public static String readFile(String fileDir) {
         StringBuilder text = new StringBuilder();

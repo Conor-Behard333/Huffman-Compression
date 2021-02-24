@@ -3,55 +3,67 @@ package Huffman;
 import java.util.*;
 
 /**
- * The type Huffman tree.
+ * Creates a Huffman tree based on input data.
+ * Options to compress and uncompress data
  */
 public class HuffmanTree {
 
     /**
-     * Compress.
+     * Compress a text file.
      *
-     * @param fileDir        the file dir
-     * @param newFileDir     the new file dir
-     * @param outputFileName the output file name
+     * @param fileDir        the dir of the file
+     * @param newFileDir     the dir of the new compressed file
+     * @param outputFileName the name of the compressed file
      */
     public void compress(String fileDir, String newFileDir, String outputFileName) {
-        ArrayList<Node> leafNodes = getTree(fileDir);
+        String fileContents = BinaryFile.readFile(fileDir);
+
+        //create the leaf nodes for the given data in the file
+        ArrayList<Node> leafNodes = getTree(fileContents);
+
+        //create an encoder to compress the data
         HashMap<Character, String> encoder = getEncoder(leafNodes);
+
         newFileDir += "\\" + outputFileName + "_compressed.txt";
-        new CompressFile(fileDir, newFileDir, encoder, leafNodes);
+        new CompressedFile(fileContents, newFileDir, encoder, leafNodes);
     }
 
     /**
-     * Uncompress.
+     * uncompress a text file.
      *
-     * @param fileDir        the file dir
-     * @param newFileDir     the new file dir
-     * @param outputFileName the output file name
+     * @param fileDir        the dir of the compressed file
+     * @param newFileDir     the dir of the new uncompressed file
+     * @param outputFileName the name of the uncompressed file
      */
     public void uncompress(String fileDir, String newFileDir, String outputFileName) {
         newFileDir += "\\" + outputFileName + "_uncompressed.txt";
-        new UncompressFile(fileDir, newFileDir);
+        new UncompressedFile(fileDir, newFileDir);
     }
 
     /**
-     * Gets tree.
+     * Fills the tree with the data.
      *
-     * @param fileDir the file dir
-     * @return the tree
+     * @param fileContents the file dir
+     * @return the leaf nodes of the tree
      */
-    private ArrayList<Node> getTree(String fileDir) {
-        HashMap<Character, Integer> wordFrequencies = getWordFrequencies(fileDir);
+    private ArrayList<Node> getTree(String fileContents) {
+        //gets the character frequencies
+        HashMap<Character, Integer> characterFrequencies = getCharFrequencies(fileContents);
 
-        ArrayList<Node> tree = getLeafNodes(wordFrequencies);
+        //get the leaf nodes of the tree which can be used to traverse it
+        ArrayList<Node> tree = getLeafNodes(characterFrequencies);
+
+        //stores just the leaf nodes
         ArrayList<Node> leafNodes = new ArrayList<>(tree);
 
+        //fills the tree using the character frequencies
         fillTree(tree);
 
         return leafNodes;
     }
 
     /**
-     * Gets encoder.
+     * Creates the encoder.
      *
      * @param leafNodes the leaf nodes
      * @return the encoder
@@ -59,6 +71,7 @@ public class HuffmanTree {
     private HashMap<Character, String> getEncoder(ArrayList<Node> leafNodes) {
         HashMap<Character, String> encoder = new HashMap<>();
 
+        //dictionary where the key is the path and the value is the character of the respected leaf node
         for (Node leafNode : leafNodes) {
             String path = getPath(leafNode);
             Character value = leafNode.getValue();
@@ -70,36 +83,35 @@ public class HuffmanTree {
 
 
     /**
-     * Gets word frequencies.
+     * Creates a dictionary where the key is the character and the value is how often that key appears in the text.
      *
-     * @param fileDir the file dir
-     * @return the word frequencies
+     * @param fileContents the file dir
+     * @return the character frequencies
      */
-    private HashMap<Character, Integer> getWordFrequencies(String fileDir) {
-        String file = BinaryFile.readFile(fileDir);
-        HashMap<Character, Integer> wordFrequencies = new HashMap<>();
+    private HashMap<Character, Integer> getCharFrequencies(String fileContents) {
+        HashMap<Character, Integer> characterFrequencies = new HashMap<>();
 
-        for (int i = 0; i < file.length(); i++) {
-            char character = file.charAt(i);
-            if (wordFrequencies.containsKey(character)) {
-                wordFrequencies.put(character, wordFrequencies.get(character) + 1);
+        for (int i = 0; i < fileContents.length(); i++) {
+            char character = fileContents.charAt(i);
+            if (characterFrequencies.containsKey(character)) {
+                characterFrequencies.put(character, characterFrequencies.get(character) + 1);
             } else {
-                wordFrequencies.put(character, 1);
+                characterFrequencies.put(character, 1);
             }
         }
-        return wordFrequencies;
+        return characterFrequencies;
     }
 
     /**
-     * Gets leaf nodes.
+     * create the leaf nodes for the tree.
      *
-     * @param wordFrequencies the word frequencies
+     * @param characterFrequencies the character frequencies
      * @return the leaf nodes
      */
-    private ArrayList<Node> getLeafNodes(HashMap<Character, Integer> wordFrequencies) {
+    private ArrayList<Node> getLeafNodes(HashMap<Character, Integer> characterFrequencies) {
         ArrayList<Node> tree = new ArrayList<>();
         final int[] index = {0};
-        wordFrequencies.forEach((key, value) -> {
+        characterFrequencies.forEach((key, value) -> {
             tree.add(new Node(value, true));
             tree.get(index[0]).setValue(key);
             index[0]++;
@@ -108,7 +120,7 @@ public class HuffmanTree {
     }
 
     /**
-     * Find path string.
+     * Find the path from a leaf node to the root node.
      *
      * @param node      the node
      * @param prev_node the prev node
@@ -131,7 +143,8 @@ public class HuffmanTree {
     }
 
     /**
-     * Gets path.
+     * Return the reverse of the path from a leaf node to a root node.
+     * The reverse is simply the path from the root node to a leaf node
      *
      * @param node the node
      * @return the path
@@ -142,9 +155,17 @@ public class HuffmanTree {
     }
 
     /**
-     * Fill tree.
+     * Create a filled tree
      *
-     * @param tree the tree
+     * Tree starts as a list of leaf nodes
+     * The list is then sorted by frequency from smallest to biggest
+     * Two child nodes are created which are the first 2 nodes in the list
+     * The two child nodes are removed from the list of leaf nodes
+     * A parent node is created and added to the tree
+     *
+     * This is repeated until there is only 1 node left which is the root node
+     *
+     * @param tree the list of leaf nodes
      */
     private void fillTree(ArrayList<Node> tree) {
         while (tree.size() > 1) {
@@ -160,11 +181,11 @@ public class HuffmanTree {
     }
 
     /**
-     * Create node node.
+     * Create a parent node with two child nodes.
      *
-     * @param childLeft  the child left
-     * @param childRight the child right
-     * @return the node
+     * @param childLeft  the left child
+     * @param childRight the right child
+     * @return the parent node
      */
     private Node createNode(Node childLeft, Node childRight) {
         Node node = new Node(childLeft.getFrequency() + childRight.getFrequency(), false);

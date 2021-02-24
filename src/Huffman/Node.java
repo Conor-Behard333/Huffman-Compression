@@ -4,34 +4,13 @@ package Huffman;
  * The type Node.
  */
 public class Node implements Comparable<Node> {
-    /**
-     * The Root.
-     */
     private boolean root = false;
-    /**
-     * The Leaf node.
-     */
-    private boolean leafNode;
-    /**
-     * The Frequency.
-     */
-    private int frequency;
-    /**
-     * The Child left.
-     */
-    private Node child_left = null;
-    /**
-     * The Child right.
-     */
-    private Node child_right = null;
-    /**
-     * The Parent.
-     */
-    private Node parent = null;
-    /**
-     * The Value.
-     */
+    private final boolean leafNode;
+    private final int frequency;
     private Character value;
+    private Node child_left = null;
+    private Node child_right = null;
+    private Node parent = null;
 
     /**
      * Instantiates a new Node.
@@ -124,7 +103,7 @@ public class Node implements Comparable<Node> {
      *
      * @param child_left the child left
      */
-//Setters
+
     public void setChild_left(Node child_left) {
         this.child_left = child_left;
     }
@@ -163,5 +142,18 @@ public class Node implements Comparable<Node> {
      */
     public void setRoot(boolean root) {
         this.root = root;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "root=" + root +
+                ", leafNode=" + leafNode +
+                ", frequency=" + frequency +
+                ", child_left=" + child_left +
+                ", child_right=" + child_right +
+                ", parent=" + parent +
+                ", value=" + value +
+                '}' + "\n";
     }
 }
