@@ -14,10 +14,19 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.Arrays;
 
+/**
+ * The type Options ui.
+ */
 public class OptionsUI {
     private File fileSelected = null;
     private File outputDir = null;
 
+    /**
+     * Instantiates a new Options ui.
+     *
+     * @param title    the title
+     * @param compress the compress
+     */
     public OptionsUI(String title, boolean compress) {
         Stage stage = new Stage();
         stage.setTitle(title);
@@ -45,13 +54,27 @@ public class OptionsUI {
         stage.show();
     }
 
-    private Text getTextElement(String s) {
-        Text selectOut = new Text(s);
+    /**
+     * Gets text element.
+     *
+     * @param text the text displayed
+     * @return the text element
+     */
+    private Text getTextElement(String text) {
+        Text selectOut = new Text(text);
         selectOut.setStyle("-fx-font-size: 30");
         selectOut.setTranslateY(5);
         return selectOut;
     }
 
+    /**
+     * Gets v box.
+     *
+     * @param hBox1 the h box 1
+     * @param hBox2 the h box 2
+     * @param hBox3 the h box 3
+     * @return the v box
+     */
     private VBox getVBox(HBox hBox1, HBox hBox2, HBox hBox3) {
         VBox root = new VBox();
         hBox1.setPadding(new Insets(20, 0, 20, 10));
@@ -63,6 +86,12 @@ public class OptionsUI {
         return root;
     }
 
+    /**
+     * Create back button.
+     *
+     * @param stage the stage
+     * @return the button
+     */
     private Button createBackButton(Stage stage) {
         Button backButton = new Button("Back");
         backButton.setPrefSize(250, 50);
@@ -74,6 +103,13 @@ public class OptionsUI {
         return backButton;
     }
 
+    /**
+     * Creates ok button.
+     *
+     * @param title    the title
+     * @param compress where it is used to compress or uncompress
+     * @return the button
+     */
     private Button createOkButton(String title, boolean compress) {
         Button okButton = new Button(title);
         okButton.setPrefSize(250, 50);
@@ -92,6 +128,7 @@ public class OptionsUI {
                                 fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
                     }
                 } catch (Exception e) {
+                    e.printStackTrace();
                     showAlert(Alert.AlertType.ERROR, "Unsuccessful", "Something went wrong!", Arrays.toString(e.getStackTrace()));
                 }
             }
@@ -99,14 +136,34 @@ public class OptionsUI {
         return okButton;
     }
 
+    /**
+     * Removes txt extension from a file name.
+     *
+     * @param fileName the file name
+     * @return the string
+     */
     private String removeTxtExtension(String fileName) {
         return fileName.split("\\.")[0];
     }
 
+    /**
+     * Remove compressed tag string.
+     *
+     * @param fileName the file name
+     * @return the string
+     */
     private String removeCompressedTag(String fileName) {
         return fileName.split("_")[0];
     }
 
+    /**
+     * Shows alert.
+     *
+     * @param alertType   the alert type
+     * @param title       the title
+     * @param headerText  the header text
+     * @param contentText the content text
+     */
     private void showAlert(Alert.AlertType alertType, String title, String headerText, String contentText) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -115,6 +172,12 @@ public class OptionsUI {
         alert.showAndWait();
     }
 
+    /**
+     * Gets select file button.
+     *
+     * @param stage the stage
+     * @return the select file button
+     */
     private Button getSelectFileButton(Stage stage) {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
@@ -132,6 +195,12 @@ public class OptionsUI {
         return button;
     }
 
+    /**
+     * Gets select directory button.
+     *
+     * @param stage the stage
+     * @return the select dir button
+     */
     private Button getSelectDirButton(Stage stage) {
         DirectoryChooser dc = new DirectoryChooser();
         Button button = new Button("Select Output directory");

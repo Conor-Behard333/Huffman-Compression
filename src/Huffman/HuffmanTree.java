@@ -1,5 +1,9 @@
 package Huffman;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -16,7 +20,7 @@ public class HuffmanTree {
      * @param outputFileName the name of the compressed file
      */
     public void compress(String fileDir, String newFileDir, String outputFileName) {
-        String fileContents = BinaryFile.readFile(fileDir);
+        String fileContents = readFile(fileDir);
 
         //create the leaf nodes for the given data in the file
         ArrayList<Node> leafNodes = getTree(fileContents);
@@ -156,13 +160,13 @@ public class HuffmanTree {
 
     /**
      * Create a filled tree
-     *
+     * <p>
      * Tree starts as a list of leaf nodes
      * The list is then sorted by frequency from smallest to biggest
      * Two child nodes are created which are the first 2 nodes in the list
      * The two child nodes are removed from the list of leaf nodes
      * A parent node is created and added to the tree
-     *
+     * <p>
      * This is repeated until there is only 1 node left which is the root node
      *
      * @param tree the list of leaf nodes
@@ -195,5 +199,25 @@ public class HuffmanTree {
         childRight.setParent(node);
         node.setRoot(false);
         return node;
+    }
+
+    /**
+     * Read a file.
+     *
+     * @param fileDir the file dir
+     * @return the contents of the file as a string
+     */
+    public String readFile(String fileDir) {
+        StringBuilder text = new StringBuilder();
+        try {
+            String line;
+            BufferedReader r = new BufferedReader(new FileReader(fileDir));
+            while ((line = r.readLine()) != null) {
+                text.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return text.toString().trim();
     }
 }

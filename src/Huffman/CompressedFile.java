@@ -1,9 +1,6 @@
 package Huffman;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,18 +12,16 @@ public class CompressedFile {
     /**
      * Instantiates a new Compress.
      *
-     * @param fileContents    the file dir of the file to be compressed
-     * @param newFileDir the file dir of the compressed file
-     * @param encoder    the encoder
-     * @param leafNodes  the leaf nodes of the Huffman tree
+     * @param fileContents the file dir of the file to be compressed
+     * @param newFileDir   the file dir of the compressed file
+     * @param encoder      the encoder
+     * @param leafNodes    the leaf nodes of the Huffman tree
      */
-    CompressedFile(String fileContents, String newFileDir, HashMap<Character, String> encoder, ArrayList<Node> leafNodes){
-//        String fileContents = BinaryFile.readFile(fileDir);
+    CompressedFile(String fileContents, String newFileDir, HashMap<Character, String> encoder, ArrayList<Node> leafNodes) {
         String compressedData = getCompressedData(fileContents, encoder);
-        addTreeStructureAndPaddingToFile(newFileDir, leafNodes, compressedData);
-        writeBinaryDataToFile(compressedData, newFileDir);
+        int padding = addTreeStructureAndPaddingToFile(newFileDir, leafNodes, compressedData);
+        writeBinaryDataToFile(compressedData, newFileDir, padding);
     }
-
 
 
     /**
@@ -54,7 +49,7 @@ public class CompressedFile {
      * @param leafNodes      the leaf nodes of the Huffman tree
      * @param compressedData the compressed data
      */
-    private void addTreeStructureAndPaddingToFile(String newFileDir, ArrayList<Node> leafNodes, String compressedData) {
+    private int addTreeStructureAndPaddingToFile(String newFileDir, ArrayList<Node> leafNodes, String compressedData) {
         int padding = 8 - (compressedData.length() % 8);
         if (compressedData.length() % 8 == 0) {
             padding = 0;
@@ -70,11 +65,12 @@ public class CompressedFile {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return padding;
     }
 
     /**
      * Gets the structure of the Huffman tree.
-     *
+     * <p>
      * The structure of the tree is represented as the path to a leaf node and the character for that leaf node
      * For example:
      * 01011 A
@@ -97,30 +93,42 @@ public class CompressedFile {
      * @param compressedData the compressed data
      * @param fileDir        the file dir of the compressed file
      */
-    private void writeBinaryDataToFile(String compressedData, String fileDir) {
-        try {
-            File compressedFile = new File(fileDir);
-            BinaryFile outputStream = new BinaryFile(compressedFile);
+    private void writeBinaryDataToFile(String compressedData, String fileDir, int padding) {
+        compressedData = addPadding(compressedData, padding);
 
-            byte[] bits = new byte[8];
-            int index = 0;
-            for (int i = 0; i < compressedData.length(); i++) {
-                if (index == 8) {
-                    outputStream.write(bits);
-                    bits = new byte[8];
-                    index = 0;
-                }
-                if (compressedData.charAt(i) == '1') {
-                    bits[index] = 1;
-                } else if (compressedData.charAt(i) == '0') {
-                    bits[index] = 0;
-                }
-                index++;
+        byte[] data = new byte[compressedData.length() / 8];
+        int index = 0;
+        for (int i = 0; i < compressedData.length(); i += 8) {
+            data[index] = (byte) Integer.parseInt(compressedData.substring(i, i + 8), 2);
+            index++;
+        }
+
+        try {
+            InputStream is = new ByteArrayInputStream(data);
+            OutputStream os = new FileOutputStream(fileDir, true);
+
+            while (is.read(data) != -1) {
+                os.write(data);
             }
-            outputStream.write(bits);
-            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Adds padding to the compressed data
+     *
+     * @param compressedData the compressed data
+     * @param padding        the amount of padding needed
+     * @return the compressed data with padding
+     */
+    private String addPadding(String compressedData, int padding) {
+        StringBuilder compressedDataBuilder = new StringBuilder(compressedData);
+        for (int i = 0; i < padding; i++) {
+            compressedDataBuilder.append("0");
+        }
+        compressedData = compressedDataBuilder.toString();
+        return compressedData;
+    }
+
 }

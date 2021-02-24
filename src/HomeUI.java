@@ -5,7 +5,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * The type Home ui.
+ * The main class where the program is run from.
+ * Initialises and run the UI.
  */
 public class HomeUI extends Application {
     /**
@@ -41,8 +42,14 @@ public class HomeUI extends Application {
         stage.show();
     }
 
-    private Button getButton(String s) {
-        Button compress = new Button(s);
+    /**
+     * Creates a button with specific size and style
+     *
+     * @param text the text displayed on the button
+     * @return Button
+     */
+    private Button getButton(String text) {
+        Button compress = new Button(text);
         compress.setPrefSize(520, 100);
         compress.setStyle("-fx-font-size: 50");
         return compress;
