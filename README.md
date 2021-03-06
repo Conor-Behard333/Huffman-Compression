@@ -1,6 +1,6 @@
 # Huffman-Compression
 ## How to run the program:
-open and run the jar file named 'CA1.jar'
+Download and run the jar file named 'CA1.jar'
 ## How to use the program:
 ### Compress:
 To compress a file, click on the compress button given when the program first runs.
