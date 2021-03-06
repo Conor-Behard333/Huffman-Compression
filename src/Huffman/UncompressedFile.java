@@ -3,6 +3,8 @@ package Huffman;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Used to uncompress a file and save it to a location
@@ -14,7 +16,7 @@ public class UncompressedFile {
      * @param fileDir    the compressed file dir
      * @param newFileDir the file dir for the uncompressed file
      */
-    UncompressedFile(String fileDir, String newFileDir) {
+    UncompressedFile(String fileDir, String newFileDir) throws IOException{
         //get the tree structure and the padding stored in the file
         String[] treeAndPadding = getTreeStructureAndPadding(fileDir);
 
@@ -87,69 +89,19 @@ public class UncompressedFile {
      * @return the root node of the tree
      */
     private Node createTree(String treeStructure) {
-        String[] treeCodeArr = treeStructure.split(" ");
-        String[][] leafNodesAndPaths = getLeafNodesAndPaths(treeCodeArr);
-
-        Node rootNode = new Node(0, false);
-        rootNode.setRoot(true);
-        for (String[] leafNode : leafNodesAndPaths) {
-            addNodeToTree(rootNode, leafNode[0], leafNode[1]);
+        HashMap<Character, Integer> characterFrequencies = new HashMap<>();
+        String[] data = treeStructure.split(" ");
+        for (int i = 0; i < data.length; i += 2) {
+            characterFrequencies.put((char) Integer.parseInt(data[i]), Integer.parseInt(data[i + 1]));
         }
-        return rootNode;
-    }
 
-    /**
-     * Store the leaf node value as one element and the path to that node as another
-     *
-     * @param treeStructureArr the tree structure as a String array
-     * @return the leaf nodes and path
-     */
-    private String[][] getLeafNodesAndPaths(String[] treeStructureArr) {
-        String[][] leafNodes = new String[treeStructureArr.length / 2][2];
+        //get the leaf nodes of the tree which can be used to traverse it
+        ArrayList<Node> tree = HuffmanTree.getLeafNodes(characterFrequencies);
 
-        int index = 0;
-        for (int i = 0; i < leafNodes.length; i++) {
-            for (int j = 0; j < leafNodes[i].length; j++) {
-                leafNodes[i][j] = treeStructureArr[index];
-                index++;
-            }
-        }
-        return leafNodes;
-    }
+        //fills the tree using the character frequencies
+        HuffmanTree.fillTree(tree);
 
-    /**
-     * Add the node to rootNode.
-     *
-     * @param rootNode the rootNode
-     * @param path     the path to the root node
-     * @param value    the value of the node
-     */
-    private void addNodeToTree(Node rootNode, String path, String value) {
-        Node currentNode = rootNode;
-        for (int i = 0; i < path.length(); i++) {
-            char direction = path.charAt(i);
-            if (direction == '0') {
-                if (currentNode.getChild_left() == null) {
-                    if (i == path.length() - 1) {
-                        currentNode.setChild_left(new Node(0, true));
-                        currentNode.getChild_left().setValue((char) Integer.parseInt(value));
-                    } else {
-                        currentNode.setChild_left(new Node(0, false));
-                    }
-                }
-                currentNode = currentNode.getChild_left();
-            } else if (direction == '1') {
-                if (currentNode.getChild_right() == null) {
-                    if (i == path.length() - 1) {
-                        currentNode.setChild_right(new Node(0, true));
-                        currentNode.getChild_right().setValue((char) Integer.parseInt(value));
-                    } else {
-                        currentNode.setChild_right(new Node(0, false));
-                    }
-                }
-                currentNode = currentNode.getChild_right();
-            }
-        }
+        return tree.get(0);
     }
 
     /**
@@ -201,15 +153,9 @@ public class UncompressedFile {
      * @param uncompressedData the uncompressed data
      * @param fileDir          the file dir
      */
-    protected void saveFile(String uncompressedData, String fileDir) {
-        try {
-            FileWriter write = new FileWriter(fileDir, false);
-            try (PrintWriter printLine = new PrintWriter(write)) {
-                printLine.print(uncompressedData);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    protected void saveFile(String uncompressedData, String fileDir) throws IOException {
+        FileWriter fw = new FileWriter(fileDir);
+        fw.write(uncompressedData);
+        fw.close();
     }
-
 }

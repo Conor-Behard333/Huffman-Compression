@@ -1,9 +1,9 @@
 package Huffman;
 
 /**
- * The type Node.
+ * Used to store the data of a single node in the binary tree
  */
-public class Node implements Comparable<Node> {
+public class Node {
     private boolean root = false;
     private final boolean leafNode;
     private final int frequency;
@@ -15,24 +15,12 @@ public class Node implements Comparable<Node> {
     /**
      * Instantiates a new Node.
      *
-     * @param frequency the frequency
+     * @param frequency the frequency of the character
      * @param leafNode  the leaf node
      */
     Node(int frequency, boolean leafNode) {
         this.frequency = frequency;
         this.leafNode = leafNode;
-    }
-
-    /**
-     * Compare to int.
-     *
-     * @param other the other
-     * @return the int
-     */
-    @Override
-    public int compareTo(Node other) {
-        //when sorting an array of nodes it will order them by frequency from smallest to biggest
-        return Integer.compare(this.frequency, other.getFrequency());
     }
 
     /**
@@ -45,7 +33,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Gets child left.
+     * Gets left child node.
      *
      * @return the child left
      */
@@ -54,7 +42,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Gets child right.
+     * Gets right child node.
      *
      * @return the child right
      */
@@ -63,7 +51,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Gets parent.
+     * Gets parent node.
      *
      * @return the parent
      */
@@ -81,25 +69,25 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Is root boolean.
+     * Checks to see if this node is a root node
      *
-     * @return the boolean
+     * @return true if root node, false if not
      */
     public boolean isRoot() {
         return root;
     }
 
     /**
-     * Is leaf node boolean.
+     * Checks to see if this node is a leaf node
      *
-     * @return the boolean
+     * @return true if leaf node, false if not
      */
     public boolean isLeafNode() {
         return leafNode;
     }
 
     /**
-     * Sets child left.
+     * Sets the left child node.
      *
      * @param child_left the child left
      */
@@ -109,7 +97,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Sets child right.
+     * Sets the right child node.
      *
      * @param child_right the child right
      */
@@ -118,7 +106,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Sets parent.
+     * Sets parent node.
      *
      * @param parent the parent
      */
@@ -127,7 +115,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Sets value.
+     * Sets character value.
      *
      * @param value the value
      */
@@ -136,7 +124,7 @@ public class Node implements Comparable<Node> {
     }
 
     /**
-     * Sets root.
+     * Sets root node.
      *
      * @param root the root
      */
@@ -144,16 +132,4 @@ public class Node implements Comparable<Node> {
         this.root = root;
     }
 
-    @Override
-    public String toString() {
-        return "Node{" +
-                "root=" + root +
-                ", leafNode=" + leafNode +
-                ", frequency=" + frequency +
-                ", child_left=" + child_left +
-                ", child_right=" + child_right +
-                ", parent=" + parent +
-                ", value=" + value +
-                '}' + "\n";
-    }
 }

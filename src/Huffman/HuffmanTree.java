@@ -1,9 +1,6 @@
 package Huffman;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -19,17 +16,19 @@ public class HuffmanTree {
      * @param newFileDir     the dir of the new compressed file
      * @param outputFileName the name of the compressed file
      */
-    public void compress(String fileDir, String newFileDir, String outputFileName) {
+    public void compress(String fileDir, String newFileDir, String outputFileName) throws IOException {
         String fileContents = readFile(fileDir);
 
         //create the leaf nodes for the given data in the file
         ArrayList<Node> leafNodes = getTree(fileContents);
-
         //create an encoder to compress the data
         HashMap<Character, String> encoder = getEncoder(leafNodes);
 
         newFileDir += "\\" + outputFileName + "_compressed.txt";
-        new CompressedFile(fileContents, newFileDir, encoder, leafNodes);
+
+        HashMap<Character, Integer> characterFrequencies = getCharFrequencies(fileContents);
+
+        new CompressedFile(fileContents, newFileDir, encoder, characterFrequencies);
     }
 
     /**
@@ -39,7 +38,7 @@ public class HuffmanTree {
      * @param newFileDir     the dir of the new uncompressed file
      * @param outputFileName the name of the uncompressed file
      */
-    public void uncompress(String fileDir, String newFileDir, String outputFileName) {
+    public void uncompress(String fileDir, String newFileDir, String outputFileName) throws IOException {
         newFileDir += "\\" + outputFileName + "_uncompressed.txt";
         new UncompressedFile(fileDir, newFileDir);
     }
@@ -81,7 +80,6 @@ public class HuffmanTree {
             Character value = leafNode.getValue();
             encoder.put(value, path);
         }
-
         return encoder;
     }
 
@@ -112,7 +110,7 @@ public class HuffmanTree {
      * @param characterFrequencies the character frequencies
      * @return the leaf nodes
      */
-    private ArrayList<Node> getLeafNodes(HashMap<Character, Integer> characterFrequencies) {
+    public static ArrayList<Node> getLeafNodes(HashMap<Character, Integer> characterFrequencies) {
         ArrayList<Node> tree = new ArrayList<>();
         final int[] index = {0};
         characterFrequencies.forEach((key, value) -> {
@@ -171,9 +169,9 @@ public class HuffmanTree {
      *
      * @param tree the list of leaf nodes
      */
-    private void fillTree(ArrayList<Node> tree) {
+    public static void fillTree(ArrayList<Node> tree) {
         while (tree.size() > 1) {
-            Collections.sort(tree);
+            insertionSort(tree);
             Node childLeft = tree.get(0);
             Node childRight = tree.get(1);
             Node parent = createNode(childLeft, childRight);
@@ -185,13 +183,34 @@ public class HuffmanTree {
     }
 
     /**
+     * Sorts the list of leaf nodes by frequency from smallest to biggest
+     * using insertion sort.
+     *
+     * @param tree list of leaf nodes in the tree
+     */
+    public static void insertionSort(ArrayList<Node> tree) {
+        int pos = tree.size() - 1;
+        while (pos > 0) {
+            int indexNew = pos - 1;
+            Node n = tree.get(indexNew);
+            int valueNew = tree.get(indexNew).getFrequency();
+            while ((indexNew < tree.size() - 1) && (valueNew > tree.get(indexNew + 1).getFrequency())) {
+                tree.set(indexNew, tree.get(indexNew + 1));
+                indexNew++;
+            }
+            tree.set(indexNew, n);
+            pos--;
+        }
+    }
+
+    /**
      * Create a parent node with two child nodes.
      *
      * @param childLeft  the left child
      * @param childRight the right child
      * @return the parent node
      */
-    private Node createNode(Node childLeft, Node childRight) {
+    private static Node createNode(Node childLeft, Node childRight) {
         Node node = new Node(childLeft.getFrequency() + childRight.getFrequency(), false);
         node.setChild_left(childLeft);
         node.setChild_right(childRight);
@@ -207,13 +226,14 @@ public class HuffmanTree {
      * @param fileDir the file dir
      * @return the contents of the file as a string
      */
-    public String readFile(String fileDir) {
+    private String readFile(String fileDir) {
         StringBuilder text = new StringBuilder();
         try {
             String line;
             BufferedReader r = new BufferedReader(new FileReader(fileDir));
             while ((line = r.readLine()) != null) {
                 text.append(line);
+                text.append("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();

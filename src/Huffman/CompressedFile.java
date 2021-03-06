@@ -1,7 +1,6 @@
 package Huffman;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -10,19 +9,23 @@ import java.util.HashMap;
 public class CompressedFile {
 
     /**
-     * Instantiates a new Compress.
+     * Instantiates a new Compressed file object.
      *
-     * @param fileContents the file dir of the file to be compressed
-     * @param newFileDir   the file dir of the compressed file
-     * @param encoder      the encoder
-     * @param leafNodes    the leaf nodes of the Huffman tree
+     * @param fileContents         the file dir of the file to be compressed
+     * @param newFileDir           the file dir of the compressed file
+     * @param encoder              the encoder
+     * @param characterFrequencies the character frequencies
      */
-    CompressedFile(String fileContents, String newFileDir, HashMap<Character, String> encoder, ArrayList<Node> leafNodes) {
+    CompressedFile(String fileContents, String newFileDir, HashMap<Character, String> encoder, HashMap<Character, Integer> characterFrequencies) throws IOException {
+        //turns data in file into 1's and 0's
         String compressedData = getCompressedData(fileContents, encoder);
-        int padding = addTreeStructureAndPaddingToFile(newFileDir, leafNodes, compressedData);
+
+        //adds the padding and tree structure to the compressed file
+        int padding = addTreeStructureAndPaddingToFile(newFileDir, compressedData, characterFrequencies);
+
+        //writes the compressed data as binary to a file
         writeBinaryDataToFile(compressedData, newFileDir, padding);
     }
-
 
     /**
      * Compresses the data using the encoder
@@ -45,46 +48,26 @@ public class CompressedFile {
      * Adds the tree structure of the Huffman tree and
      * how much padding has been used when compressing the data.
      *
-     * @param newFileDir     the file dir of the compressed file
-     * @param leafNodes      the leaf nodes of the Huffman tree
-     * @param compressedData the compressed data
+     * @param newFileDir           the file dir of the compressed file
+     * @param compressedData       the compressed data
+     * @param characterFrequencies f
      */
-    private int addTreeStructureAndPaddingToFile(String newFileDir, ArrayList<Node> leafNodes, String compressedData) {
+    private int addTreeStructureAndPaddingToFile(String newFileDir, String compressedData, HashMap<Character, Integer> characterFrequencies) throws IOException {
         int padding = 8 - (compressedData.length() % 8);
         if (compressedData.length() % 8 == 0) {
             padding = 0;
         }
-
-        try {
-            FileWriter write = new FileWriter(newFileDir, false);//don't append to the file
-            try (PrintWriter printLine = new PrintWriter(write)) {
-                printLine.print(getTreeStructure(leafNodes) + "\n");
-                printLine.print(padding + "\n");
-            }
-            write.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        StringBuilder treeStructure = new StringBuilder();
+        for (Character character : characterFrequencies.keySet()) {
+            treeStructure.append((int) character).append(" ").append(characterFrequencies.get(character)).append(" ");
         }
+
+        PrintWriter printLine = new PrintWriter(new FileWriter(newFileDir, false));//don't append to the file
+        printLine.print(treeStructure.toString() + "\n");
+        printLine.print(padding + "\n");
+
+        printLine.close();
         return padding;
-    }
-
-    /**
-     * Gets the structure of the Huffman tree.
-     * <p>
-     * The structure of the tree is represented as the path to a leaf node and the character for that leaf node
-     * For example:
-     * 01011 A
-     * means to get to the leaf node A go left, right, left, right, right
-     *
-     * @param leafNodes the leaf nodes
-     * @return the structure of the Huffman tree as a string
-     */
-    private String getTreeStructure(ArrayList<Node> leafNodes) {
-        StringBuilder treeCode = new StringBuilder();
-        for (Node leaf : leafNodes) {
-            treeCode.append(HuffmanTree.getPath(leaf)).append(" ").append((int) leaf.getValue()).append(" ");
-        }
-        return treeCode.toString();
     }
 
     /**
@@ -93,7 +76,7 @@ public class CompressedFile {
      * @param compressedData the compressed data
      * @param fileDir        the file dir of the compressed file
      */
-    private void writeBinaryDataToFile(String compressedData, String fileDir, int padding) {
+    private void writeBinaryDataToFile(String compressedData, String fileDir, int padding) throws IOException {
         compressedData = addPadding(compressedData, padding);
 
         byte[] data = new byte[compressedData.length() / 8];
@@ -103,15 +86,10 @@ public class CompressedFile {
             index++;
         }
 
-        try {
-            InputStream is = new ByteArrayInputStream(data);
-            OutputStream os = new FileOutputStream(fileDir, true);
-
-            while (is.read(data) != -1) {
-                os.write(data);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        InputStream is = new ByteArrayInputStream(data);
+        OutputStream os = new FileOutputStream(fileDir, true);
+        while (is.read(data) != -1) {
+            os.write(data);
         }
     }
 

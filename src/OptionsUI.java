@@ -3,6 +3,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -12,7 +13,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The type Options ui.
@@ -128,7 +134,6 @@ public class OptionsUI {
                                 fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
                     showAlert(Alert.AlertType.ERROR, "Unsuccessful", "Something went wrong!", Arrays.toString(e.getStackTrace()));
                 }
             }
@@ -168,7 +173,16 @@ public class OptionsUI {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(headerText);
-        alert.setContentText(contentText);
+
+        if (alertType.equals(Alert.AlertType.ERROR)) {
+            TextArea fullMessage = new TextArea(contentText);
+            fullMessage.setWrapText(true);
+            fullMessage.setEditable(false);
+            alert.getDialogPane().setContent(fullMessage);
+        } else {
+            alert.setContentText(contentText);
+        }
+
         alert.showAndWait();
     }
 
@@ -187,6 +201,9 @@ public class OptionsUI {
         button.setPrefSize(200, 60);
         button.setStyle("-fx-font-size: 18");
         button.setOnAction(event -> {
+            if (fileSelected != null) {
+                fc.setInitialDirectory(fileSelected.getParentFile());
+            }
             fileSelected = fc.showOpenDialog(stage);
             if (fileSelected != null) {
                 button.setText(fileSelected.getName());
@@ -207,6 +224,9 @@ public class OptionsUI {
         button.setPrefSize(250, 60);
         button.setStyle("-fx-font-size: 18");
         button.setOnAction(event -> {
+            if (fileSelected != null) {
+                dc.setInitialDirectory(fileSelected.getParentFile());
+            }
             outputDir = dc.showDialog(stage);
             if (outputDir != null) {
                 button.setText(outputDir.getPath());
