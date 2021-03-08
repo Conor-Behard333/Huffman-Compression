@@ -39,6 +39,9 @@ public class CompressedFile {
         for (int i = 0; i < fileContents.length(); i++) {
             if (encoder.get(fileContents.charAt(i)) != null) {
                 compressedData.append(encoder.get(fileContents.charAt(i)));
+            }else{
+                //If the character does not have a place in the tree then use the encoding for an underscore
+                compressedData.append(encoder.get('_'));
             }
         }
         return compressedData.toString();

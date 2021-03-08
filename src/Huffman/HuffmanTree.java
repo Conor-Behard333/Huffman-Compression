@@ -1,14 +1,16 @@
 package Huffman;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Creates a Huffman tree based on input data.
  * Options to compress and uncompress data
  */
 public class HuffmanTree {
-
     /**
      * Compress a text file.
      *
@@ -16,7 +18,7 @@ public class HuffmanTree {
      * @param newFileDir     the dir of the new compressed file
      * @param outputFileName the name of the compressed file
      */
-    public void compress(String fileDir, String newFileDir, String outputFileName) throws IOException {
+    public void compress(String fileDir, String newFileDir, String outputFileName) throws IOException, ClassNotFoundException {
         String fileContents = readFile(fileDir);
 
         //create the leaf nodes for the given data in the file
@@ -27,6 +29,32 @@ public class HuffmanTree {
         newFileDir += "\\" + outputFileName + "_compressed.txt";
 
         HashMap<Character, Integer> characterFrequencies = getCharFrequencies(fileContents);
+        //todo Added
+//        if (true) {// save the encoding for this file
+//            FileOutputStream serializer = new FileOutputStream("encoder.ser");
+//            ObjectOutputStream out = new ObjectOutputStream(serializer);
+//            out.writeObject(encoder);
+//            out.close();
+//            serializer.close();
+//
+//            FileOutputStream serializer2 = new FileOutputStream("characterFrequencies.ser");
+//            ObjectOutputStream out2 = new ObjectOutputStream(serializer2);
+//            out2.writeObject(characterFrequencies);
+//            out2.close();
+//            serializer2.close();
+//        } else { //use the encoding of another file
+//            FileInputStream fileIn = new FileInputStream("encoder.ser");
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            encoder = (HashMap<Character, String>) in.readObject();
+//            in.close();
+//            fileIn.close();
+//
+//            FileInputStream fileIn2 = new FileInputStream("characterFrequencies.ser");
+//            ObjectInputStream in2 = new ObjectInputStream(fileIn2);
+//            characterFrequencies = (HashMap<Character, Integer>) in2.readObject();
+//            in2.close();
+//            fileIn2.close();
+//        }
 
         new CompressedFile(fileContents, newFileDir, encoder, characterFrequencies);
     }
@@ -100,6 +128,10 @@ public class HuffmanTree {
             } else {
                 characterFrequencies.put(character, 1);
             }
+        }
+        // This is done so that any unknown characters will be represented using an underscore
+        if (!characterFrequencies.containsKey('_')) {
+            characterFrequencies.put('_', 0);
         }
         return characterFrequencies;
     }
