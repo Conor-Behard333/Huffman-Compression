@@ -1,11 +1,9 @@
 package Huffman;
 
-import java.io.Serializable;
-
 /**
  * Used to store the data of a single node in the binary tree
  */
-public class Node implements Serializable {
+public class Node {
     private boolean root = false;
     private final boolean leafNode;
     private final int frequency;

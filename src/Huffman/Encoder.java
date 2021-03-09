@@ -3,7 +3,7 @@ package Huffman;
 import java.io.*;
 import java.util.HashMap;
 
-public class Encoder {
+public class Encoder implements Serializable {
     private HashMap<Character, Integer> characterFrequencies;
     private HashMap<Character, String> encodings;
 

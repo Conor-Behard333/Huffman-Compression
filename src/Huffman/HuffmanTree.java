@@ -24,32 +24,6 @@ public class HuffmanTree {
         codes = getEncoder(leafNodes);
 
         characterFrequencies = getCharFrequencies(fileContents);
-        //todo Added
-//        if (true) {// save the encoding for this file
-//            FileOutputStream serializer = new FileOutputStream("encoder.ser");
-//            ObjectOutputStream out = new ObjectOutputStream(serializer);
-//            out.writeObject(encoder);
-//            out.close();
-//            serializer.close();
-//
-//            FileOutputStream serializer2 = new FileOutputStream("characterFrequencies.ser");
-//            ObjectOutputStream out2 = new ObjectOutputStream(serializer2);
-//            out2.writeObject(characterFrequencies);
-//            out2.close();
-//            serializer2.close();
-//        } else { //use the encoding of another file
-//            FileInputStream fileIn = new FileInputStream("encoder.ser");
-//            ObjectInputStream in = new ObjectInputStream(fileIn);
-//            encoder = (HashMap<Character, String>) in.readObject();
-//            in.close();
-//            fileIn.close();
-//
-//            FileInputStream fileIn2 = new FileInputStream("characterFrequencies.ser");
-//            ObjectInputStream in2 = new ObjectInputStream(fileIn2);
-//            characterFrequencies = (HashMap<Character, Integer>) in2.readObject();
-//            in2.close();
-//            fileIn2.close();
-//        }
     }
 
     public String getFileContents() {
