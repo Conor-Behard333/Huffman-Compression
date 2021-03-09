@@ -11,38 +11,59 @@ import java.util.HashMap;
  * Options to compress and uncompress data
  */
 public class HuffmanTree {
-    /**
-     * Compress a text file.
-     *
-     * @param fileDir        the dir of the file
-     * @param newFileDir     the dir of the new compressed file
-     * @param outputFileName the name of the compressed file
-     */
-    public void compress(String fileDir, String newFileDir, String outputFileName) throws IOException, ClassNotFoundException {
-        String fileContents = readFile(fileDir);
+    private String fileContents;
+    private HashMap<Character, String> codes;
+    private HashMap<Character, Integer> characterFrequencies;
+
+    public HuffmanTree(String fileDir) {
+        fileContents = readFile(fileDir);
 
         //create the leaf nodes for the given data in the file
         ArrayList<Node> leafNodes = getTree(fileContents);
         //create an encoder to compress the data
-        HashMap<Character, String> encoder = getEncoder(leafNodes);
+        codes = getEncoder(leafNodes);
 
-        newFileDir += "\\" + outputFileName + "_compressed.txt";
-
-        HashMap<Character, Integer> characterFrequencies = getCharFrequencies(fileContents);
-        new CompressedFile(fileContents, newFileDir, encoder, characterFrequencies);
+        characterFrequencies = getCharFrequencies(fileContents);
+        //todo Added
+//        if (true) {// save the encoding for this file
+//            FileOutputStream serializer = new FileOutputStream("encoder.ser");
+//            ObjectOutputStream out = new ObjectOutputStream(serializer);
+//            out.writeObject(encoder);
+//            out.close();
+//            serializer.close();
+//
+//            FileOutputStream serializer2 = new FileOutputStream("characterFrequencies.ser");
+//            ObjectOutputStream out2 = new ObjectOutputStream(serializer2);
+//            out2.writeObject(characterFrequencies);
+//            out2.close();
+//            serializer2.close();
+//        } else { //use the encoding of another file
+//            FileInputStream fileIn = new FileInputStream("encoder.ser");
+//            ObjectInputStream in = new ObjectInputStream(fileIn);
+//            encoder = (HashMap<Character, String>) in.readObject();
+//            in.close();
+//            fileIn.close();
+//
+//            FileInputStream fileIn2 = new FileInputStream("characterFrequencies.ser");
+//            ObjectInputStream in2 = new ObjectInputStream(fileIn2);
+//            characterFrequencies = (HashMap<Character, Integer>) in2.readObject();
+//            in2.close();
+//            fileIn2.close();
+//        }
     }
 
-    /**
-     * uncompress a text file.
-     *
-     * @param fileDir        the dir of the compressed file
-     * @param newFileDir     the dir of the new uncompressed file
-     * @param outputFileName the name of the uncompressed file
-     */
-    public void uncompress(String fileDir, String newFileDir, String outputFileName) throws IOException {
-        newFileDir += "\\" + outputFileName + "_uncompressed.txt";
-        new UncompressedFile(fileDir, newFileDir);
+    public String getFileContents() {
+        return fileContents;
     }
+
+    public HashMap<Character, String> getCodes() {
+        return codes;
+    }
+
+    public HashMap<Character, Integer> getCharacterFrequencies() {
+        return characterFrequencies;
+    }
+
 
     /**
      * Fills the tree with the data.

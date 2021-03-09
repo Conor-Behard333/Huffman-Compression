@@ -1,3 +1,5 @@
+import Huffman.Decoder;
+import Huffman.Encoder;
 import Huffman.HuffmanTree;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -116,15 +118,16 @@ public class OptionsUI {
         okButton.setPrefSize(250, 50);
         okButton.setStyle("-fx-font-size: 30");
         okButton.setOnAction(event -> {
-            HuffmanTree huffman = new HuffmanTree();
             if (fileSelected != null && outputDir != null) {
+                HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath());
                 try {
                     if (compress) {
-                        huffman.compress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeTxtExtension(fileSelected.getName()));
+                        Encoder encoder = new Encoder(huffman.getCharacterFrequencies(), huffman.getCodes());
+                        encoder.compress(huffman.getFileContents(), outputDir.getAbsolutePath(), removeTxtExtension(fileSelected.getName()));
                         showAlert(Alert.AlertType.INFORMATION, "Successfully compressed", "Successfully compressed",
                                 fileSelected.getName() + " was successful compressed and placed in " + outputDir.getAbsolutePath());
                     } else {
-                        huffman.uncompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeTxtExtension(fileSelected.getName())));
+                        Decoder.decompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeTxtExtension(fileSelected.getName())));
                         showAlert(Alert.AlertType.INFORMATION, "Successfully uncompressed", "Successfully uncompressed",
                                 fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
                     }
