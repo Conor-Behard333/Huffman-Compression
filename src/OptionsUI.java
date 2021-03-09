@@ -37,7 +37,7 @@ public class OptionsUI {
         stage.setOnCloseRequest(event -> System.exit(0));//exit program if the main window is closed
 
         Text select = getTextElement("File: ");
-        Button selectBtn = null;
+        Button selectBtn;
         if (compress) {
             selectBtn = getSelectFileButton(stage, "*.txt");
         } else {
