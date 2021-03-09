@@ -12,7 +12,7 @@ public class HomeUI extends Application {
     /**
      * The entry point of application.
      *
-     * @param args the input arguments
+     * @param args not used
      */
     public static void main(String[] args) {
         launch();

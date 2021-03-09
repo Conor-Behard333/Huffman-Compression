@@ -3,6 +3,7 @@ package Huffman;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,11 @@ public class HuffmanTree {
     private HashMap<Character, String> codes;
     private HashMap<Character, Integer> characterFrequencies;
 
+    /**
+     * Instantiates a new Huffman tree.
+     *
+     * @param fileDir the file dir
+     */
     public HuffmanTree(String fileDir) {
         fileContents = readFile(fileDir);
 
@@ -29,14 +35,29 @@ public class HuffmanTree {
         codes = getEncoder(leafNodes);
     }
 
+    /**
+     * Gets file contents.
+     *
+     * @return the file contents
+     */
     public String getFileContents() {
         return fileContents;
     }
 
+    /**
+     * Gets codes.
+     *
+     * @return the codes
+     */
     public HashMap<Character, String> getCodes() {
         return codes;
     }
 
+    /**
+     * Gets character frequencies.
+     *
+     * @return the character frequencies
+     */
     public HashMap<Character, Integer> getCharacterFrequencies() {
         return characterFrequencies;
     }
@@ -185,6 +206,13 @@ public class HuffmanTree {
     }
 
 
+    /**
+     * Quick sort.
+     *
+     * @param tree  the tree
+     * @param start the start
+     * @param end   the end
+     */
     public static void quickSort(ArrayList<Node> tree, int start, int end) {
         if (start < end) {
             int pi = partition(tree, start, end);
@@ -194,6 +222,14 @@ public class HuffmanTree {
         }
     }
 
+    /**
+     * Partition int.
+     *
+     * @param tree  the tree
+     * @param start the start
+     * @param end   the end
+     * @return the int
+     */
     public static int partition(ArrayList<Node> tree, int start, int end) {
         int pivot = tree.get(end).getFrequency();
 
@@ -246,6 +282,7 @@ public class HuffmanTree {
         } catch (IOException e) {
             e.printStackTrace();
         }
+//        System.out.println(text.toString().trim());
         return text.toString().trim();
     }
 }

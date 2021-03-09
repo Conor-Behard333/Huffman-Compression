@@ -3,15 +3,32 @@ package Huffman;
 import java.io.*;
 import java.util.HashMap;
 
+/**
+ * The type Encoder.
+ */
 public class Encoder implements Serializable {
     private HashMap<Character, Integer> characterFrequencies;
     private HashMap<Character, String> encodings;
 
+    /**
+     * Instantiates a new Encoder.
+     *
+     * @param characterFrequencies the character frequencies
+     * @param encodings            the encodings
+     */
     public Encoder(HashMap<Character, Integer> characterFrequencies, HashMap<Character, String> encodings) {
         this.characterFrequencies = characterFrequencies;
         this.encodings = encodings;
     }
 
+    /**
+     * Compress.
+     *
+     * @param fileContents   the file contents
+     * @param newFileDir     the new file dir
+     * @param outputFileName the output file name
+     * @throws IOException the io exception
+     */
     public void compress(String fileContents, String newFileDir, String outputFileName) throws IOException {
         newFileDir += "\\" + outputFileName + "-compressed.bin";
 

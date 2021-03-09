@@ -83,6 +83,11 @@ public class OptionsUI {
         stage.show();
     }
 
+    /**
+     * Gets check box element.
+     *
+     * @return the check box element
+     */
     private CheckBox getCheckBoxElement() {
         CheckBox saveEncoder = new CheckBox();
         saveEncoder.setTranslateX(40);
@@ -194,6 +199,12 @@ public class OptionsUI {
         return okButton;
     }
 
+    /**
+     * Save encoder.
+     *
+     * @param encoder the encoder
+     * @throws IOException the io exception
+     */
     private void saveEncoder(Encoder encoder) throws IOException {
         FileOutputStream serializer = new FileOutputStream(outputDir + "\\" + removeExtension(fileSelected.getName()) + "-encoder.ser");
         ObjectOutputStream out = new ObjectOutputStream(serializer);
@@ -202,6 +213,13 @@ public class OptionsUI {
         serializer.close();
     }
 
+    /**
+     * Gets saved encoder.
+     *
+     * @return the saved encoder
+     * @throws IOException            the io exception
+     * @throws ClassNotFoundException the class not found exception
+     */
     private Encoder getSavedEncoder() throws IOException, ClassNotFoundException {
         FileInputStream fileIn = new FileInputStream(encoderFile.getAbsolutePath());
         ObjectInputStream in = new ObjectInputStream(fileIn);

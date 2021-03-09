@@ -9,8 +9,19 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The type Decoder.
+ */
 public class Decoder {
 
+    /**
+     * Decompress.
+     *
+     * @param fileDir        the file dir
+     * @param newFileDir     the new file dir
+     * @param outputFileName the output file name
+     * @throws IOException the io exception
+     */
     public static void decompress(String fileDir, String newFileDir, String outputFileName) throws IOException {
         newFileDir += "\\" + outputFileName + "-uncompressed.txt";
         //get the tree structure and the padding stored in the file
@@ -148,6 +159,7 @@ public class Decoder {
      *
      * @param uncompressedData the uncompressed data
      * @param fileDir          the file dir
+     * @throws IOException the io exception
      */
     protected static void saveFile(String uncompressedData, String fileDir) throws IOException {
         FileWriter fw = new FileWriter(fileDir);
