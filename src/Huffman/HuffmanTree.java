@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -171,7 +172,7 @@ public class HuffmanTree {
      */
     public static void fillTree(ArrayList<Node> tree) {
         while (tree.size() > 1) {
-            insertionSort(tree);
+            quickSort(tree, 0, tree.size() - 1);
             Node childLeft = tree.get(0);
             Node childRight = tree.get(1);
             Node parent = createNode(childLeft, childRight);
@@ -182,25 +183,30 @@ public class HuffmanTree {
         tree.get(0).setRoot(true);
     }
 
-    /**
-     * Sorts the list of leaf nodes by frequency from smallest to biggest
-     * using insertion sort.
-     *
-     * @param tree list of leaf nodes in the tree
-     */
-    public static void insertionSort(ArrayList<Node> tree) {
-        int pos = tree.size() - 1;
-        while (pos > 0) {
-            int indexNew = pos - 1;
-            Node n = tree.get(indexNew);
-            int valueNew = tree.get(indexNew).getFrequency();
-            while ((indexNew < tree.size() - 1) && (valueNew > tree.get(indexNew + 1).getFrequency())) {
-                tree.set(indexNew, tree.get(indexNew + 1));
-                indexNew++;
-            }
-            tree.set(indexNew, n);
-            pos--;
+
+    public static void quickSort(ArrayList<Node> tree, int start, int end) {
+        if (start < end) {
+            int pi = partition(tree, start, end);
+
+            quickSort(tree, start, pi - 1);
+            quickSort(tree, pi + 1, end);
         }
+    }
+
+    public static int partition(ArrayList<Node> tree, int start, int end) {
+        int pivot = tree.get(end).getFrequency();
+
+        int i = (start - 1);
+
+        for (int j = start; j <= end - 1; j++) {
+            if (tree.get(j).getFrequency() < pivot) {
+                i++;
+                Collections.swap(tree, i, j);
+            }
+        }
+
+        Collections.swap(tree, i + 1, end);
+        return i + 1;
     }
 
     /**

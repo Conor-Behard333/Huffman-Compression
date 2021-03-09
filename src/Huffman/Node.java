@@ -18,7 +18,7 @@ public class Node {
      * @param frequency the frequency of the character
      * @param leafNode  the leaf node
      */
-    Node(int frequency, boolean leafNode) {
+    public Node(int frequency, boolean leafNode) {
         this.frequency = frequency;
         this.leafNode = leafNode;
     }
