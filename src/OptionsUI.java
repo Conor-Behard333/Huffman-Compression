@@ -12,6 +12,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
@@ -36,7 +37,12 @@ public class OptionsUI {
         stage.setOnCloseRequest(event -> System.exit(0));//exit program if the main window is closed
 
         Text select = getTextElement("File: ");
-        Button selectBtn = getSelectFileButton(stage);
+        Button selectBtn = null;
+        if (compress) {
+            selectBtn = getSelectFileButton(stage, "*.txt");
+        } else {
+            selectBtn = getSelectFileButton(stage, "*.bin");
+        }
         HBox hBox1 = new HBox();
 
         HBox hBox2 = null;
@@ -152,33 +158,30 @@ public class OptionsUI {
         okButton.setStyle("-fx-font-size: 30");
         okButton.setOnAction(event -> {
             if (fileSelected != null && outputDir != null) {
-                HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath());
                 try {
                     if (compress) {
+                        HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath());
                         Encoder encoder = new Encoder(huffman.getCharacterFrequencies(), huffman.getCodes());
-                        ////////////////////////////////TEST//////////////////////////////////
+
                         if (encoderFile != null) {
-                            FileInputStream fileIn = new FileInputStream(encoderFile.getAbsolutePath());
-                            ObjectInputStream in = new ObjectInputStream(fileIn);
-                            encoder = (Encoder) in.readObject();
-                            in.close();
-                            fileIn.close();
+                            encoder = getSavedEncoder();
                         }
 
                         if (saveEncoder.isSelected()) {
-                            FileOutputStream serializer = new FileOutputStream(outputDir + "\\" + removeTxtExtension(fileSelected.getName()) + "-encoder.ser");
-                            ObjectOutputStream out = new ObjectOutputStream(serializer);
-                            out.writeObject(encoder);
-                            out.close();
-                            serializer.close();
+                            saveEncoder(encoder);
                         }
-                        //////////////////////////////////////////////////////////////////////
 
-                        encoder.compress(huffman.getFileContents(), outputDir.getAbsolutePath(), removeTxtExtension(fileSelected.getName()));
-                        showAlert(Alert.AlertType.INFORMATION, "Successfully compressed", "Successfully compressed",
+                        encoder.compress(huffman.getFileContents(), outputDir.getAbsolutePath(), removeExtension(fileSelected.getName()));
+
+                        long ogSize = fileSelected.length();
+                        long newSize = new File(outputDir.getAbsolutePath() + "\\" + removeExtension(fileSelected.getName()) + "-compressed.bin").length();
+                        double ratio = ((double) (ogSize - newSize) / ogSize) * 100;
+
+                        showAlert(Alert.AlertType.INFORMATION, "Successfully compressed",
+                                "Successfully Compressed File by " + new DecimalFormat("##.##").format(ratio) + "%",
                                 fileSelected.getName() + " was successful compressed and placed in " + outputDir.getAbsolutePath());
                     } else {
-                        Decoder.decompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeTxtExtension(fileSelected.getName())));
+                        Decoder.decompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeExtension(fileSelected.getName())));
                         showAlert(Alert.AlertType.INFORMATION, "Successfully uncompressed", "Successfully uncompressed",
                                 fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
                     }
@@ -191,13 +194,30 @@ public class OptionsUI {
         return okButton;
     }
 
+    private void saveEncoder(Encoder encoder) throws IOException {
+        FileOutputStream serializer = new FileOutputStream(outputDir + "\\" + removeExtension(fileSelected.getName()) + "-encoder.ser");
+        ObjectOutputStream out = new ObjectOutputStream(serializer);
+        out.writeObject(encoder);
+        out.close();
+        serializer.close();
+    }
+
+    private Encoder getSavedEncoder() throws IOException, ClassNotFoundException {
+        FileInputStream fileIn = new FileInputStream(encoderFile.getAbsolutePath());
+        ObjectInputStream in = new ObjectInputStream(fileIn);
+        Encoder encoder = (Encoder) in.readObject();
+        in.close();
+        fileIn.close();
+        return encoder;
+    }
+
     /**
      * Removes the txt extension from a file name.
      *
      * @param fileName the file name (example.txt)
      * @return the file name without the extension (example)
      */
-    private String removeTxtExtension(String fileName) {
+    private String removeExtension(String fileName) {
         return fileName.split("\\.")[0];
     }
 
@@ -208,7 +228,7 @@ public class OptionsUI {
      * @return the string
      */
     private String removeCompressedTag(String fileName) {
-        return fileName.split("_")[0];
+        return fileName.split("-")[0];
     }
 
     /**
@@ -242,10 +262,10 @@ public class OptionsUI {
      * @param stage the stage
      * @return the select file button
      */
-    private Button getSelectFileButton(Stage stage) {
+    private Button getSelectFileButton(Stage stage, String extension) {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text Files", "*.txt")
+                new FileChooser.ExtensionFilter("Text Files", extension)
         );
         Button button = new Button("Select .txt File");
         button.setPrefSize(200, 60);

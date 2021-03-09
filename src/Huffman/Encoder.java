@@ -13,7 +13,8 @@ public class Encoder implements Serializable {
     }
 
     public void compress(String fileContents, String newFileDir, String outputFileName) throws IOException {
-        newFileDir += "\\" + outputFileName + "_compressed.txt";
+        newFileDir += "\\" + outputFileName + "-compressed.bin";
+
         //turns data in file into 1's and 0's
         String compressedData = getCompressedData(fileContents, encodings);
 

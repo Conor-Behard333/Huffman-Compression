@@ -1,7 +1,7 @@
 package Huffman;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,12 +19,14 @@ public class HuffmanTree {
     public HuffmanTree(String fileDir) {
         fileContents = readFile(fileDir);
 
+        //get the frequencies of each character in the file
+        characterFrequencies = getCharFrequencies(fileContents);
+
         //create the leaf nodes for the given data in the file
-        ArrayList<Node> leafNodes = getTree(fileContents);
+        ArrayList<Node> leafNodes = getTree(characterFrequencies);
+
         //create an encoder to compress the data
         codes = getEncoder(leafNodes);
-
-        characterFrequencies = getCharFrequencies(fileContents);
     }
 
     public String getFileContents() {
@@ -43,12 +45,11 @@ public class HuffmanTree {
     /**
      * Fills the tree with the data.
      *
-     * @param fileContents the file dir
+     * @param characterFrequencies the file dir
      * @return the leaf nodes of the tree
      */
-    private ArrayList<Node> getTree(String fileContents) {
+    private ArrayList<Node> getTree(HashMap<Character, Integer> characterFrequencies) {
         //gets the character frequencies
-        HashMap<Character, Integer> characterFrequencies = getCharFrequencies(fileContents);
 
         //get the leaf nodes of the tree which can be used to traverse it
         ArrayList<Node> tree = getLeafNodes(characterFrequencies);
@@ -235,11 +236,12 @@ public class HuffmanTree {
     private String readFile(String fileDir) {
         StringBuilder text = new StringBuilder();
         try {
-            String line;
-            BufferedReader r = new BufferedReader(new FileReader(fileDir));
-            while ((line = r.readLine()) != null) {
-                text.append(line);
-                text.append("\n");
+            DataInputStream reader = new DataInputStream(new FileInputStream(fileDir));
+            int numberOfBytes = reader.available();
+            if (numberOfBytes > 0) {
+                byte[] bytes = new byte[numberOfBytes];
+                reader.read(bytes);
+                text.append(new String(bytes));
             }
         } catch (IOException e) {
             e.printStackTrace();

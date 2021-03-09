@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class Decoder {
 
     public static void decompress(String fileDir, String newFileDir, String outputFileName) throws IOException {
-        newFileDir += "\\" + outputFileName + "_uncompressed.txt";
+        newFileDir += "\\" + outputFileName + "-uncompressed.txt";
         //get the tree structure and the padding stored in the file
         String[] treeAndPadding = getTreeStructureAndPadding(fileDir);
 
