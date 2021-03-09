@@ -1,9 +1,7 @@
 package Huffman;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -162,8 +160,9 @@ public class Decoder {
      * @throws IOException the io exception
      */
     protected static void saveFile(String uncompressedData, String fileDir) throws IOException {
-        FileWriter fw = new FileWriter(fileDir);
-        fw.write(uncompressedData);
-        fw.close();
+        File file = new File(fileDir);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+        bw.write(uncompressedData);
+        bw.close();
     }
 }

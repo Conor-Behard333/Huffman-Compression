@@ -277,7 +277,7 @@ public class HuffmanTree {
             if (numberOfBytes > 0) {
                 byte[] bytes = new byte[numberOfBytes];
                 reader.read(bytes);
-                text.append(new String(bytes));
+                text.append(new String(bytes, StandardCharsets.UTF_8));
             }
         } catch (IOException e) {
             e.printStackTrace();
