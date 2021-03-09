@@ -3,22 +3,19 @@ package Huffman;
 import java.io.*;
 import java.util.HashMap;
 
-/**
- * Used to compress a file and save it to a location
- */
-public class CompressedFile {
+public class Encoder {
+    private HashMap<Character, Integer> characterFrequencies;
+    private HashMap<Character, String> encodings;
 
-    /**
-     * Instantiates a new Compressed file object.
-     *
-     * @param fileContents         the file dir of the file to be compressed
-     * @param newFileDir           the file dir of the compressed file
-     * @param encoder              the encoder
-     * @param characterFrequencies the character frequencies
-     */
-    CompressedFile(String fileContents, String newFileDir, HashMap<Character, String> encoder, HashMap<Character, Integer> characterFrequencies) throws IOException {
+    public Encoder(HashMap<Character, Integer> characterFrequencies, HashMap<Character, String> encodings) {
+        this.characterFrequencies = characterFrequencies;
+        this.encodings = encodings;
+    }
+
+    public void compress(String fileContents, String newFileDir, String outputFileName) throws IOException {
+        newFileDir += "\\" + outputFileName + "_compressed.txt";
         //turns data in file into 1's and 0's
-        String compressedData = getCompressedData(fileContents, encoder);
+        String compressedData = getCompressedData(fileContents, encodings);
 
         //adds the padding and tree structure to the compressed file
         int padding = addTreeStructureAndPaddingToFile(newFileDir, compressedData, characterFrequencies);
@@ -39,7 +36,7 @@ public class CompressedFile {
         for (int i = 0; i < fileContents.length(); i++) {
             if (encoder.get(fileContents.charAt(i)) != null) {
                 compressedData.append(encoder.get(fileContents.charAt(i)));
-            }else{
+            } else {
                 //If the character does not have a place in the tree then use the encoding for an underscore
                 compressedData.append(encoder.get('_'));
             }
@@ -111,5 +108,4 @@ public class CompressedFile {
         compressedData = compressedDataBuilder.toString();
         return compressedData;
     }
-
 }

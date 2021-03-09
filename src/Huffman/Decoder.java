@@ -1,22 +1,18 @@
 package Huffman;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * Used to uncompress a file and save it to a location
- */
-public class UncompressedFile {
-    /**
-     * Instantiates a new UncompressedFile.
-     *
-     * @param fileDir    the compressed file dir
-     * @param newFileDir the file dir for the uncompressed file
-     */
-    UncompressedFile(String fileDir, String newFileDir) throws IOException{
+public class Decoder {
+
+    public static void decompress(String fileDir, String newFileDir, String outputFileName) throws IOException {
+        newFileDir += "\\" + outputFileName + "_uncompressed.txt";
         //get the tree structure and the padding stored in the file
         String[] treeAndPadding = getTreeStructureAndPadding(fileDir);
 
@@ -39,7 +35,7 @@ public class UncompressedFile {
      * @param fileDir the file dir of the compressed file
      * @return the tree structure and the padding
      */
-    private String[] getTreeStructureAndPadding(String fileDir) {
+    private static String[] getTreeStructureAndPadding(String fileDir) {
         String[] treeAndPadding = new String[2];
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileDir));
@@ -59,7 +55,7 @@ public class UncompressedFile {
      * @param offset  the offset of bits due to the padding
      * @return the string
      */
-    private String readBinaryDataFromFile(String fileDir, int offset) {
+    private static String readBinaryDataFromFile(String fileDir, int offset) {
         StringBuilder bits = new StringBuilder();
         byte[] array = getFileAsByteArray(fileDir);
         assert array != null;
@@ -88,7 +84,7 @@ public class UncompressedFile {
      * @param treeStructure the structure of the tree
      * @return the root node of the tree
      */
-    private Node createTree(String treeStructure) {
+    private static Node createTree(String treeStructure) {
         HashMap<Character, Integer> characterFrequencies = new HashMap<>();
         String[] data = treeStructure.split(" ");
         for (int i = 0; i < data.length; i += 2) {
@@ -110,7 +106,7 @@ public class UncompressedFile {
      * @param fileDir the file dir for the compressed file
      * @return the byte array of the compressed file
      */
-    private byte[] getFileAsByteArray(String fileDir) {
+    private static byte[] getFileAsByteArray(String fileDir) {
         byte[] array = null;
         try {
             array = Files.readAllBytes(Paths.get(fileDir));
@@ -128,7 +124,7 @@ public class UncompressedFile {
      * @param padding        the padding of bits
      * @return the decoded string
      */
-    private String decode(Node rootNode, String compressedData, int padding) {
+    private static String decode(Node rootNode, String compressedData, int padding) {
         StringBuilder decodedData = new StringBuilder();
         Node currentNode = rootNode;
         int index = 0;
@@ -153,7 +149,7 @@ public class UncompressedFile {
      * @param uncompressedData the uncompressed data
      * @param fileDir          the file dir
      */
-    protected void saveFile(String uncompressedData, String fileDir) throws IOException {
+    protected static void saveFile(String uncompressedData, String fileDir) throws IOException {
         FileWriter fw = new FileWriter(fileDir);
         fw.write(uncompressedData);
         fw.close();
