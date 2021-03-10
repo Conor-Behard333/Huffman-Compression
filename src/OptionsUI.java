@@ -45,9 +45,9 @@ public class OptionsUI {
         Text select = getTextElement("File: ");
         Button selectBtn;
         if (compress) {
-            selectBtn = getSelectFileButton(stage, "*.txt", "Select .txt File");
+            selectBtn = getSelectFileButton(stage, "*", "Select a text File");
         } else {
-            selectBtn = getSelectFileButton(stage, "*.bin", "Select .bin File");
+            selectBtn = getSelectFileButton(stage, "*.bin", "Select a .bin File");
         }
         HBox hBox1 = new HBox();
 
@@ -348,7 +348,7 @@ public class OptionsUI {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().addAll(
                 // Filter only files with a specified extension
-                new FileChooser.ExtensionFilter("Text Files", extension)
+                new FileChooser.ExtensionFilter("Select a file", extension)
         );
         Button button = new Button(buttonName);
         // Set the style and size of the button
