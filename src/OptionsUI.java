@@ -1,6 +1,7 @@
 import Huffman.Decoder;
 import Huffman.Encoder;
 import Huffman.HuffmanTree;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -16,7 +17,8 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 
 /**
- * The type Options ui.
+ * Creates the components of the GUI and adds their functionality.
+ * Makes the UI for the options to compress and the uncompress files.
  */
 public class OptionsUI {
     private File fileSelected = null;
@@ -26,16 +28,20 @@ public class OptionsUI {
 
     /**
      * Instantiates a new Options ui.
+     * If the boolean 'compress' is true then the compression window will be created
+     * if it is false then the decompression window will be created
      *
-     * @param title    the title
-     * @param compress the compress
+     * @param title    the title of the GUI window
+     * @param compress whether or not the UI is for compression
      */
     public OptionsUI(String title, boolean compress) {
+        // creates the stage for the GUI
         Stage stage = new Stage();
         stage.setTitle(title);
         stage.setResizable(false);
         stage.setOnCloseRequest(event -> System.exit(0));//exit program if the main window is closed
 
+        //creates the UI to select a file
         Text select = getTextElement("File: ");
         Button selectBtn;
         if (compress) {
@@ -47,6 +53,7 @@ public class OptionsUI {
 
         HBox hBox2 = null;
         if (compress) {
+            // creates the UI to save and load compression encoders (only needed for the compression UI)
             Text saveEncoderText = getTextElement("Save encoder: ");
             saveEncoderText.setTranslateX(30);
             saveEncoder = getCheckBoxElement();
@@ -56,30 +63,35 @@ public class OptionsUI {
             Button selectEncoder = getSelectEncoderButton(stage);
             hBox2 = new HBox();
             hBox2.getChildren().addAll(useDifferentEncoder, selectEncoder);
-
         } else {
+            // adds the UI functions to a horizontal box.
             hBox1.getChildren().addAll(select, selectBtn);
         }
 
 
+        // creates the UI option to select an output directory
         Text selectOut = getTextElement("Select output location: ");
         Button selectDirBtn = getSelectDirButton(stage);
         HBox hBox3 = new HBox();
         hBox3.getChildren().addAll(selectOut, selectDirBtn);
 
+        // creates an ok and back button to allow the user to navigate the UI
         Button okButton = createOkButton(title, compress);
         Button backButton = createBackButton(stage);
         HBox hBox4 = new HBox();
         hBox4.getChildren().addAll(backButton, okButton);
 
+        //adds all the components together
         VBox root = getVBox(hBox1, hBox2, hBox3, hBox4);
 
+        //creates the window with all the components
         if (compress) {
             stage.setScene(new Scene(root, 600, 400));
         } else {
             stage.setScene(new Scene(root, 600, 300));
         }
 
+        //shows the window
         stage.show();
     }
 
@@ -164,32 +176,20 @@ public class OptionsUI {
         okButton.setOnAction(event -> {
             if (fileSelected != null && outputDir != null) {
                 try {
+                    Stage loadingStage = new Stage();
+                    ProgressBar loading = getLoadingBar(loadingStage, "Uncompressing Please Wait...", "Uncompressing: ");
                     if (compress) {
-                        HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath());
-                        Encoder encoder = new Encoder(huffman.getCharacterFrequencies(), huffman.getCodes());
-
-                        if (encoderFile != null) {
-                            encoder = getSavedEncoder();
-                        }
-
-                        if (saveEncoder.isSelected()) {
-                            saveEncoder(encoder);
-                        }
-
-                        encoder.compress(huffman.getFileContents(), outputDir.getAbsolutePath(), removeExtension(fileSelected.getName()));
-
-                        long ogSize = fileSelected.length();
-                        long newSize = new File(outputDir.getAbsolutePath() + "\\" + removeExtension(fileSelected.getName()) + "-compressed.bin").length();
-                        double ratio = ((double) (ogSize - newSize) / ogSize) * 100;
-
-                        showAlert(Alert.AlertType.INFORMATION, "Successfully compressed",
-                                "Successfully Compressed File by " + new DecimalFormat("##.##").format(ratio) + "%",
-                                fileSelected.getName() + " was successful compressed and placed in " + outputDir.getAbsolutePath());
-                    } else {
-                        Decoder.decompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeExtension(fileSelected.getName())));
-                        showAlert(Alert.AlertType.INFORMATION, "Successfully uncompressed", "Successfully uncompressed",
-                                fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
+                        loading = getLoadingBar(loadingStage, "Compressing Please Wait...", "Compressing: ");
                     }
+
+                    Task runner = runner(compress);
+                    loading.progressProperty().bind(runner.progressProperty());
+                    new Thread(runner).start();
+                    loadingStage.show();
+                    runner.setOnSucceeded(closeEvent -> {
+                        displayCompletedInfo(compress, loadingStage, runner);
+                    });
+                    loadingStage.setOnCloseRequest(closeEvent -> System.exit(0));
                 } catch (Exception e) {
                     e.printStackTrace();
                     showAlert(Alert.AlertType.ERROR, "Unsuccessful", "Something went wrong!", Arrays.toString(e.getStackTrace()));
@@ -197,6 +197,25 @@ public class OptionsUI {
             }
         });
         return okButton;
+    }
+
+    private void displayCompletedInfo(boolean compress, Stage loadingStage, Task runner) {
+        loadingStage.close();
+        runner.cancel();
+        long ogSize = fileSelected.length();
+        long newSize = new File(outputDir.getAbsolutePath() + "\\" + removeExtension(fileSelected.getName()) + "-compressed.bin").length();
+        double ratio = ((double) (ogSize - newSize) / ogSize) * 100;
+
+        if (compress) {
+            showAlert(Alert.AlertType.INFORMATION, "Successfully compressed",
+                    "Successfully Compressed File by " + new DecimalFormat("##.##").format(ratio) + "%",
+                    fileSelected.getName() + " was successful compressed and placed in " + outputDir.getAbsolutePath());
+
+        } else {
+            showAlert(Alert.AlertType.INFORMATION, "Successfully uncompressed", "Successfully uncompressed",
+                    fileSelected.getName() + " was successfully uncompressed and placed in " + outputDir.getAbsolutePath());
+
+        }
     }
 
     /**
@@ -348,5 +367,46 @@ public class OptionsUI {
             }
         });
         return button;
+    }
+
+    private Task runner(boolean compress) {
+        return new Task() {
+            @Override
+            protected Object call() throws Exception {
+                if (compress) {
+                    HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath());
+                    Encoder encoder = new Encoder(huffman.getCharacterFrequencies(), huffman.getCodes());
+                    if (encoderFile != null) {
+                        encoder = getSavedEncoder();
+                    }
+
+                    if (saveEncoder.isSelected()) {
+                        saveEncoder(encoder);
+                    }
+
+                    encoder.compress(huffman.getFileContents(), outputDir.getAbsolutePath(), removeExtension(fileSelected.getName()));
+                } else {
+                    Decoder.decompress(fileSelected.getAbsolutePath(), outputDir.getAbsolutePath(), removeCompressedTag(removeExtension(fileSelected.getName())));
+                }
+                return null;
+            }
+        };
+    }
+
+    private ProgressBar getLoadingBar(Stage loadingStage, String title, String text) {
+        loadingStage.setTitle(title);
+        ProgressBar loading = new ProgressBar(0);
+        loading.setPrefSize(400, 60);
+        loading.setStyle("-fx-accent: #5BC2E7");
+        Label progress = new Label(text);
+        progress.setPrefWidth(300);
+        progress.setTranslateX(10);
+        progress.setTranslateY(10);
+        progress.setStyle("-fx-font-size: 25");
+        HBox hBox = new HBox(progress, loading);
+        hBox.setSpacing(20);
+        Scene loadingScene = new Scene(hBox, 500, 60);
+        loadingStage.setScene(loadingScene);
+        return loading;
     }
 }

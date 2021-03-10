@@ -91,7 +91,6 @@ public class Node {
      *
      * @param child_left the child left
      */
-
     public void setChild_left(Node child_left) {
         this.child_left = child_left;
     }

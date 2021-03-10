@@ -282,7 +282,6 @@ public class HuffmanTree {
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        System.out.println(text.toString().trim());
         return text.toString().trim();
     }
 }

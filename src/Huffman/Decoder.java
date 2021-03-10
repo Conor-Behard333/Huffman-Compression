@@ -137,6 +137,8 @@ public class Decoder {
         StringBuilder decodedData = new StringBuilder();
         Node currentNode = rootNode;
         int index = 0;
+        //using the compressed data go right if it is a 1 and left if it is a 0
+        //if a leaf node is reached then that is the character to append to the decoded data
         while (index < compressedData.length() - padding) {
             while (!currentNode.isLeafNode()) {
                 if (compressedData.charAt(index) == '1') {

@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 /**
  * The main class where the program is run from.
- * Initialises and run the UI.
+ * Initialises and runs the UI.
  */
 public class HomeUI extends Application {
     /**
