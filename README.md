@@ -2,7 +2,7 @@
 
 ## How to run the program:
 
-Download and run the jar file named 'CA1.jar' in out/production/CA1
+Download and run the jar file named 'CA1.jar' in out/artifacts/CA1_jar
 
 If for whatever reason it does not run do this instead:
 In the terminal go to the submission folder where the src folder is located and run
