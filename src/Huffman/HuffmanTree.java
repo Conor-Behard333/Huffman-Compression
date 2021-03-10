@@ -20,20 +20,23 @@ public class HuffmanTree {
     /**
      * Instantiates a new Huffman tree.
      *
-     * @param fileDir the file dir
+     * @param fileDir               the file dir
+     * @param usingDifferentEncoder true if the user is using a different encoder
      */
-    public HuffmanTree(String fileDir) {
+    public HuffmanTree(String fileDir, boolean usingDifferentEncoder) {
         // Reads the file given by the user and stores it as a string
         fileContents = readFile(fileDir);
 
         // Get the frequencies of each character in the file
-        characterFrequencies = getCharFrequencies(fileContents);
+        characterFrequencies = getCharFrequencies(fileContents, usingDifferentEncoder);
 
         // Create the leaf nodes for the given data in the file
         ArrayList<Node> leafNodes = getTree(characterFrequencies);
 
         // Create an encoder to compress the data
         codes = getEncoder(leafNodes);
+        System.out.println(characterFrequencies);
+        System.out.println(codes);
     }
 
     /**
@@ -110,10 +113,11 @@ public class HuffmanTree {
     /**
      * Creates a dictionary where the key is the character and the value is how often that key appears in the text.
      *
-     * @param fileContents the file dir
+     * @param fileContents          the file dir
+     * @param usingDifferentEncoder true if the user is using a different encoder
      * @return the character frequencies
      */
-    private HashMap<Character, Integer> getCharFrequencies(String fileContents) {
+    private HashMap<Character, Integer> getCharFrequencies(String fileContents, boolean usingDifferentEncoder) {
         HashMap<Character, Integer> characterFrequencies = new HashMap<>();
 
         for (int i = 0; i < fileContents.length(); i++) {
@@ -124,10 +128,14 @@ public class HuffmanTree {
                 characterFrequencies.put(character, 1);
             }
         }
-        // This is done so that any unknown characters will be represented using an underscore
-        if (!characterFrequencies.containsKey('_')) {
-            characterFrequencies.put('_', 0);
+        // This is executed do if the user has selected a different encoder
+        if (usingDifferentEncoder) {
+            // This is done so that any unknown characters will be represented using an underscore
+            if (!characterFrequencies.containsKey('_')) {
+                characterFrequencies.put('_', 0);
+            }
         }
+
         return characterFrequencies;
     }
 
@@ -173,7 +181,7 @@ public class HuffmanTree {
 
     /**
      * Return the reverse of the path from a leaf node to a root node.
-     *
+     * <p>
      * The reverse is simply the path from the root node to a leaf node.
      *
      * @param node the node

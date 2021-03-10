@@ -447,7 +447,7 @@ public class OptionsUI {
             protected Object call() throws Exception {
                 if (compress) {
                     // Create a huffman tree for the file selected
-                    HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath());
+                    HuffmanTree huffman = new HuffmanTree(fileSelected.getAbsolutePath(), encoderFile != null);
                     Encoder encoder;
 
                     if (encoderFile != null) {
