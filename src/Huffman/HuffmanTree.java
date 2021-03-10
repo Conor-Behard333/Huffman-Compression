@@ -173,7 +173,8 @@ public class HuffmanTree {
 
     /**
      * Return the reverse of the path from a leaf node to a root node.
-     * The reverse is simply the path from the root node to a leaf node
+     *
+     * The reverse is simply the path from the root node to a leaf node.
      *
      * @param node the node
      * @return the path
@@ -184,12 +185,16 @@ public class HuffmanTree {
     }
 
     /**
-     * Create a filled tree
+     * Create a filled tree:
      * <p>
      * Tree starts as a list of leaf nodes
+     * <p>
      * The list is then sorted by frequency from smallest to biggest
+     * <p>
      * Two child nodes are created which are the first 2 nodes in the list
+     * <p>
      * The two child nodes are removed from the list of leaf nodes
+     * <p>
      * A parent node is created and added to the tree
      * <p>
      * This is repeated until there is only 1 node left which is the root node
@@ -209,30 +214,40 @@ public class HuffmanTree {
         tree.get(0).setRoot(true);
     }
 
-    //TODO COMMENT PROPERLY
     /**
-     * Quick sort.
+     * Quick sort:
+     * Pick one item from the list and call it pivot.
+     * <p>
+     * Partition the list using the pivot.
+     * <p>
+     * list is then reorganised so that all the elements that are smaller than the pivot are in the left partition
+     * and all the elements greater than the pivot are in the right partition.
+     * <p>
+     * Since every partition is a list on its own, recursion can be used to sort those partitions.
      *
-     * @param tree  the tree
-     * @param start the start
-     * @param end   the end
+     * @param tree  the tree that is being sorted
+     * @param start the start index
+     * @param end   the end index
      */
     public static void quickSort(ArrayList<Node> tree, int start, int end) {
         if (start < end) {
-            int pi = partition(tree, start, end);
+            int pivot = partition(tree, start, end);
 
-            quickSort(tree, start, pi - 1);
-            quickSort(tree, pi + 1, end);
+            quickSort(tree, start, pivot - 1);
+            quickSort(tree, pivot + 1, end);
         }
     }
 
     /**
-     * Partition int.
+     * Partition the list using the pivot.
+     * <p>
+     * list is then reorganised so that all the elements that are smaller than the pivot are in the left partition
+     * and all the elements greater than the pivot are in the right partition.
      *
-     * @param tree  the tree
-     * @param start the start
-     * @param end   the end
-     * @return the int
+     * @param tree  the tree that is being sorted
+     * @param start the start index
+     * @param end   the end index
+     * @return the pivot
      */
     public static int partition(ArrayList<Node> tree, int start, int end) {
         int pivot = tree.get(end).getFrequency();
