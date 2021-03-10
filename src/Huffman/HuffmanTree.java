@@ -23,15 +23,16 @@ public class HuffmanTree {
      * @param fileDir the file dir
      */
     public HuffmanTree(String fileDir) {
+        // Reads the file given by the user and stores it as a string
         fileContents = readFile(fileDir);
 
-        //get the frequencies of each character in the file
+        // Get the frequencies of each character in the file
         characterFrequencies = getCharFrequencies(fileContents);
 
-        //create the leaf nodes for the given data in the file
+        // Create the leaf nodes for the given data in the file
         ArrayList<Node> leafNodes = getTree(characterFrequencies);
 
-        //create an encoder to compress the data
+        // Create an encoder to compress the data
         codes = getEncoder(leafNodes);
     }
 
@@ -70,10 +71,8 @@ public class HuffmanTree {
      * @return the leaf nodes of the tree
      */
     private ArrayList<Node> getTree(HashMap<Character, Integer> characterFrequencies) {
-        //gets the character frequencies
-
         //get the leaf nodes of the tree which can be used to traverse it
-        ArrayList<Node> tree = getLeafNodes(characterFrequencies);
+        ArrayList<Node> tree = createLeafNodes(characterFrequencies);
 
         //stores just the leaf nodes
         ArrayList<Node> leafNodes = new ArrayList<>(tree);
@@ -91,12 +90,17 @@ public class HuffmanTree {
      * @return the encoder
      */
     private HashMap<Character, String> getEncoder(ArrayList<Node> leafNodes) {
+        // Dictionary where the key is the path and the value is the character of the respected leaf node
         HashMap<Character, String> encoder = new HashMap<>();
 
-        //dictionary where the key is the path and the value is the character of the respected leaf node
         for (Node leafNode : leafNodes) {
+            // Finds the path to get to the leaf node
             String path = getPath(leafNode);
-            Character value = leafNode.getValue();
+
+            // store the value of the leaf node as a char
+            char value = leafNode.getValue();
+
+            //put the value and the path into the dictionary
             encoder.put(value, path);
         }
         return encoder;
@@ -133,7 +137,7 @@ public class HuffmanTree {
      * @param characterFrequencies the character frequencies
      * @return the leaf nodes
      */
-    public static ArrayList<Node> getLeafNodes(HashMap<Character, Integer> characterFrequencies) {
+    public static ArrayList<Node> createLeafNodes(HashMap<Character, Integer> characterFrequencies) {
         ArrayList<Node> tree = new ArrayList<>();
         final int[] index = {0};
         characterFrequencies.forEach((key, value) -> {
@@ -152,19 +156,19 @@ public class HuffmanTree {
      * @return the string
      */
     private static String findPath(Node node, Node... prev_node) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         if (prev_node.length > 0) {
             if (node.getChild_left().equals(prev_node[0])) {
-                str += "0";
+                str.append("0");
             } else {
-                str += "1";
+                str.append("1");
             }
         }
 
         if (!node.isRoot()) {
-            str += findPath(node.getParent(), node);
+            str.append(findPath(node.getParent(), node));
         }
-        return str;
+        return str.toString();
     }
 
     /**
@@ -205,7 +209,7 @@ public class HuffmanTree {
         tree.get(0).setRoot(true);
     }
 
-
+    //TODO COMMENT PROPERLY
     /**
      * Quick sort.
      *
@@ -254,6 +258,7 @@ public class HuffmanTree {
      * @return the parent node
      */
     private static Node createNode(Node childLeft, Node childRight) {
+        // Set the frequency of the parent node to the sum of the left and right child's frequencies
         Node node = new Node(childLeft.getFrequency() + childRight.getFrequency(), false);
         node.setChild_left(childLeft);
         node.setChild_right(childRight);
@@ -264,7 +269,7 @@ public class HuffmanTree {
     }
 
     /**
-     * Read a file.
+     * Read a file given a file directory.
      *
      * @param fileDir the file dir
      * @return the contents of the file as a string

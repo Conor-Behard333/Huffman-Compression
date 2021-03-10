@@ -13,15 +13,17 @@ import java.util.HashMap;
 public class Decoder {
 
     /**
-     * Decompress.
+     * Function to decompress a compressed file.
      *
-     * @param fileDir        the file dir
-     * @param newFileDir     the new file dir
-     * @param outputFileName the output file name
-     * @throws IOException the io exception
+     * @param fileDir        the file dir of the compressed file
+     * @param newFileDir     the new file dir for the decompressed file
+     * @param outputFileName the output file name for the decompressed file
+     * @throws IOException a possible io exception
      */
     public static void decompress(String fileDir, String newFileDir, String outputFileName) throws IOException {
-        newFileDir += "\\" + outputFileName + "-uncompressed.txt";
+        // Creates the name of the decompressed file
+        newFileDir += "/" + outputFileName + "-uncompressed.txt";
+
         //get the tree structure and the padding stored in the file
         String[] treeAndPadding = getTreeStructureAndPadding(fileDir);
 
@@ -39,7 +41,7 @@ public class Decoder {
     }
 
     /**
-     * Get tree structure and padding from the compressed file.
+     * Gets the tree structure and padding from the compressed file.
      *
      * @param fileDir the file dir of the compressed file
      * @return the tree structure and the padding
@@ -48,8 +50,8 @@ public class Decoder {
         String[] treeAndPadding = new String[2];
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileDir));
-            treeAndPadding[0] = reader.readLine();
-            treeAndPadding[1] = reader.readLine();
+            treeAndPadding[0] = reader.readLine();// Tree structure is on the first line of the file
+            treeAndPadding[1] = reader.readLine();// Padding is on the second line of the file
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -62,12 +64,11 @@ public class Decoder {
      *
      * @param fileDir the file dir of the compressed file
      * @param offset  the offset of bits due to the padding
-     * @return the string
+     * @return the compressed data as a string
      */
     private static String readBinaryDataFromFile(String fileDir, int offset) {
         StringBuilder bits = new StringBuilder();
-        byte[] array = getFileAsByteArray(fileDir);
-        assert array != null;
+        byte[] array = readFileAsByteArray(fileDir);
         for (int i = offset + 2; i < array.length; i++) {
             byte b = array[i];
             int result = b & 0xff;
@@ -88,7 +89,7 @@ public class Decoder {
     }
 
     /**
-     * Create a tree from a tree structure.
+     * Create a tree from the given tree structure.
      *
      * @param treeStructure the structure of the tree
      * @return the root node of the tree
@@ -101,7 +102,7 @@ public class Decoder {
         }
 
         //get the leaf nodes of the tree which can be used to traverse it
-        ArrayList<Node> tree = HuffmanTree.getLeafNodes(characterFrequencies);
+        ArrayList<Node> tree = HuffmanTree.createLeafNodes(characterFrequencies);
 
         //fills the tree using the character frequencies
         HuffmanTree.fillTree(tree);
@@ -110,12 +111,12 @@ public class Decoder {
     }
 
     /**
-     * Get file as byte array
+     * Read file as byte array
      *
      * @param fileDir the file dir for the compressed file
      * @return the byte array of the compressed file
      */
-    private static byte[] getFileAsByteArray(String fileDir) {
+    private static byte[] readFileAsByteArray(String fileDir) {
         byte[] array = null;
         try {
             array = Files.readAllBytes(Paths.get(fileDir));

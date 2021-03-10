@@ -30,7 +30,8 @@ public class Encoder implements Serializable {
      * @throws IOException the io exception
      */
     public void compress(String fileContents, String newFileDir, String outputFileName) throws IOException {
-        newFileDir += "\\" + outputFileName + "-compressed.bin";
+        // Creates the name of the compressed file
+        newFileDir += "/" + outputFileName + "-compressed.bin";
 
         //turns data in file into 1's and 0's
         String compressedData = getCompressedData(fileContents, encodings);
@@ -68,13 +69,16 @@ public class Encoder implements Serializable {
      *
      * @param newFileDir           the file dir of the compressed file
      * @param compressedData       the compressed data
-     * @param characterFrequencies f
+     * @param characterFrequencies dictionary containing the characters and their frequencies
      */
     private int addTreeStructureAndPaddingToFile(String newFileDir, String compressedData, HashMap<Character, Integer> characterFrequencies) throws IOException {
         int padding = 8 - (compressedData.length() % 8);
         if (compressedData.length() % 8 == 0) {
             padding = 0;
         }
+
+        // Tree structure:
+        // char as an integer followed by the frequency of that character
         StringBuilder treeStructure = new StringBuilder();
         for (Character character : characterFrequencies.keySet()) {
             treeStructure.append((int) character).append(" ").append(characterFrequencies.get(character)).append(" ");
@@ -97,22 +101,26 @@ public class Encoder implements Serializable {
     private void writeBinaryDataToFile(String compressedData, String fileDir, int padding) throws IOException {
         compressedData = addPadding(compressedData, padding);
 
+        // Create an array to store the bytes of the compressed file
         byte[] data = new byte[compressedData.length() / 8];
         int index = 0;
         for (int i = 0; i < compressedData.length(); i += 8) {
+            // Split the string of bits into chunks of 8 to create a byte value
             data[index] = (byte) Integer.parseInt(compressedData.substring(i, i + 8), 2);
             index++;
         }
 
+        // Write the bytes to the file
         InputStream is = new ByteArrayInputStream(data);
-        OutputStream os = new FileOutputStream(fileDir, true);
+        OutputStream os = new FileOutputStream(fileDir, true);// Append to the file
         while (is.read(data) != -1) {
             os.write(data);
         }
     }
 
     /**
-     * Adds padding to the compressed data
+     * Adds padding to the compressed data to ensure that the number of bits
+     * can be divided by 8 without any remainder.
      *
      * @param compressedData the compressed data
      * @param padding        the amount of padding needed

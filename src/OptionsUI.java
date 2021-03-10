@@ -244,7 +244,7 @@ public class OptionsUI {
         if (compress) {
             // Calculate the compression ratio from compression the file
             long ogSize = fileSelected.length();
-            long newSize = new File(outputDir.getAbsolutePath() + "\\" + removeExtension(fileSelected.getName()) + "-compressed.bin").length();
+            long newSize = new File(outputDir.getAbsolutePath() + "/" + removeExtension(fileSelected.getName()) + "-compressed.bin").length();
             double ratio = ((double) (ogSize - newSize) / ogSize) * 100;
 
             // Displays to the user that the compression was successful
@@ -265,7 +265,7 @@ public class OptionsUI {
      * @throws IOException a possible io exception
      */
     private void saveEncoder(Encoder encoder) throws IOException {
-        FileOutputStream serializer = new FileOutputStream(outputDir + "\\" + removeExtension(fileSelected.getName()) + "-encoder.ser");
+        FileOutputStream serializer = new FileOutputStream(outputDir + "/" + removeExtension(fileSelected.getName()) + "-encoder.ser");
         ObjectOutputStream out = new ObjectOutputStream(serializer);
         out.writeObject(encoder);
         out.close();
@@ -308,6 +308,7 @@ public class OptionsUI {
         return fileName.split("-")[0];
     }
 
+    /**
     /**
      * Shows alert to the user.
      * <p>

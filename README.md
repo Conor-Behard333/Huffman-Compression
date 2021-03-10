@@ -4,8 +4,15 @@
 
 Download and run the jar file named 'CA1.jar' in out/artifacts/CA1_jar
 
-If for whatever reason it does not run do this instead:
-In the terminal go to the submission folder where the src folder is located and run
+If for whatever reason it does not run, go to cmd/terminal and change directory to where the jar file is located on your
+computer and do:
+
+```
+java -jar CA1.jar
+```
+
+If that doesn't work do this instead:
+In cmd/terminal go to the submission folder where the src folder is located and run
 
 ```
 java -classpath out/production/CA1 HomeUI

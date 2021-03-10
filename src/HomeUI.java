@@ -20,26 +20,30 @@ public class HomeUI extends Application {
 
     @Override
     public void start(Stage stage) {
+        // Set the title of the window and make it non-resizable
         stage.setTitle("Compress or Uncompress file");
         stage.setResizable(false);
-        stage.setOnCloseRequest(event -> System.exit(0));
+        stage.setOnCloseRequest(event -> System.exit(0));// Closes the program when the user closes the window
 
+        // Create a compress button that opens the Compress UI option when clicked
         Button compress = getButton("Compress file");
         compress.setOnAction(event -> {
             new OptionsUI("Compress", true);
             stage.close();
         });
 
+        // Create an uncompress button that opens the Uncompress UI option when clicked
         Button uncompress = getButton("Uncompress file");
         uncompress.setOnAction(event -> {
             new OptionsUI("Uncompress", false);
             stage.close();
         });
 
+        // Adds the buttons to the window
         VBox vBox = new VBox(compress, uncompress);
         Scene scene = new Scene(vBox, 500, 200);
         stage.setScene(scene);
-        stage.show();
+        stage.show(); // Shows the window
     }
 
     /**
