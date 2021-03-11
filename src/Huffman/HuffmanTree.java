@@ -21,22 +21,20 @@ public class HuffmanTree {
      * Instantiates a new Huffman tree.
      *
      * @param fileDir               the file dir
-     * @param usingDifferentEncoder true if the user is using a different encoder
+     * @param savingEncoder true if the user is saving the encoder
      */
-    public HuffmanTree(String fileDir, boolean usingDifferentEncoder) {
+    public HuffmanTree(String fileDir, boolean savingEncoder) {
         // Reads the file given by the user and stores it as a string
         fileContents = readFile(fileDir);
 
         // Get the frequencies of each character in the file
-        characterFrequencies = getCharFrequencies(fileContents, usingDifferentEncoder);
+        characterFrequencies = getCharFrequencies(fileContents, savingEncoder);
 
         // Create the leaf nodes for the given data in the file
         ArrayList<Node> leafNodes = getTree(characterFrequencies);
 
         // Create an encoder to compress the data
         codes = getEncoder(leafNodes);
-        System.out.println(characterFrequencies);
-        System.out.println(codes);
     }
 
     /**
@@ -114,10 +112,10 @@ public class HuffmanTree {
      * Creates a dictionary where the key is the character and the value is how often that key appears in the text.
      *
      * @param fileContents          the file dir
-     * @param usingDifferentEncoder true if the user is using a different encoder
+     * @param savingEncoder true if the user is saving the encoder
      * @return the character frequencies
      */
-    private HashMap<Character, Integer> getCharFrequencies(String fileContents, boolean usingDifferentEncoder) {
+    private HashMap<Character, Integer> getCharFrequencies(String fileContents, boolean savingEncoder) {
         HashMap<Character, Integer> characterFrequencies = new HashMap<>();
 
         for (int i = 0; i < fileContents.length(); i++) {
@@ -128,8 +126,8 @@ public class HuffmanTree {
                 characterFrequencies.put(character, 1);
             }
         }
-        // This is executed do if the user has selected a different encoder
-        if (usingDifferentEncoder) {
+        // This is executed do if the user has selected to save the encoder
+        if (savingEncoder) {
             // This is done so that any unknown characters will be represented using an underscore
             if (!characterFrequencies.containsKey('_')) {
                 characterFrequencies.put('_', 0);
