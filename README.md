@@ -12,7 +12,9 @@ java -jar CA1.jar
 ```
 
 If that doesn't work do this instead:
-In cmd/terminal go to the submission folder where the src folder is located and run
+
+Download the 'src' and 'out' folder and 
+In cmd/terminal go to the directory where the 'src' and 'out' folder is located and run.
 
 ```
 java -classpath out/production/CA1 HomeUI
