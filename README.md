@@ -2,7 +2,7 @@
 
 ## How to run the program:
 
-Download and run the jar file named 'CA1.jar' in out/artifacts/CA1_jar
+Download and open (double click) the jar file named 'CA1.jar' in out/artifacts/CA1_jar
 
 If for whatever reason it does not run, go to cmd/terminal and change directory to where the jar file is located on your
 computer and do:
