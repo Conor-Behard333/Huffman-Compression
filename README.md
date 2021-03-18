@@ -13,7 +13,7 @@ java -jar CA1.jar
 
 If that doesn't work do this instead:
 
-Download the 'out' folder and 
+Download the repo as a zip file and 
 In cmd/terminal go to the directory where the 'out' folder is located and run.
 
 ```
