@@ -1,6 +1,7 @@
 # Huffman-Compression
 
 ## How to run the program:
+PLEASE USE ANYTHING BEFORE JDK 11
 
 Download and open (double click) the jar file named 'CA1.jar' in out/artifacts/CA1_jar
 
